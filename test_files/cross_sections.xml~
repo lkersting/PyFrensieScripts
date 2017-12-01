@@ -1,0 +1,17 @@
+<ParameterList name="ANONYMOUS">
+  <ParameterList id="0" name="alias map"/>
+  <ParameterList id="11" name="Au-Native">
+    <Parameter docString="" id="1" isDefault="false" isUsed="true" name="photoatomic_file_path" type="string" value="epr_79_native.xml"/>
+    <Parameter docString="" id="2" isDefault="false" isUsed="true" name="photoatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="3" isDefault="false" isUsed="true" name="photoatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="4" isDefault="false" isUsed="true" name="photoatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" id="5" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="epr_79_native.xml"/>
+    <Parameter docString="" id="6" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="7" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="8" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" id="9" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="1.95275000000000006e+02"/>
+    <Parameter docString="" id="10" isDefault="false" isUsed="true" name="atomic_number" type="int" value="79"/>
+  </ParameterList>
+  <Validators/>
+</ParameterList>
+
