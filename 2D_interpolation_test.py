@@ -277,7 +277,7 @@ def unit_base2_cdf_lin( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha)
   cdf_1 = dist_1.evaluateCDF( e_loss_1 )
 
   # Calculate the pdf
-  cdf = lin_interp( E_alpha, cdf_0*e_loss_0_L, cdf_1*e_loss_1_L )/e_loss_L
+  cdf = lin_interp( E_alpha, cdf_0, cdf_1 )
 
   return cdf
 
@@ -316,7 +316,7 @@ def unit_base2_cdf_log( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha)
   cdf_1 = dist_1.evaluateCDF( e_loss_1 )
 
   # Calculate the pdf
-  cdf = log_interp( E_alpha, cdf_0*e_loss_0_L, cdf_1*e_loss_1_L )/e_loss_L
+  cdf = log_interp( E_alpha, cdf_0, cdf_1 )
 
   return cdf
 

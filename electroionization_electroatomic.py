@@ -35,7 +35,7 @@ binding_energy = native_data.getSubshellBindingEnergy( shell )
 
 ionization_cs = native_data.getElectroionizationCrossSection(shell)
 threshold = native_data.getElectroionizationCrossSectionThresholdEnergyIndex(shell)
-ionization_dist = Collision.createLinLinLogCorrelatedElectroionizationSubshellDistribution( native_data, shell, binding_energy, 1e-15)
+ionization_dist = Collision.createLinLinLogUnitBaseCorrelatedElectroionizationSubshellDistribution( native_data, shell, binding_energy, 1e-15)
 
 print "\nshell = ", shell
 
@@ -72,7 +72,7 @@ binding_energy = native_data.getSubshellBindingEnergy( shell )
 
 ionization_cs = native_data.getElectroionizationCrossSection(shell)
 threshold = native_data.getElectroionizationCrossSectionThresholdEnergyIndex(shell)
-ionization_dist = Collision.createLinLinLogCorrelatedElectroionizationSubshellDistribution( native_data, shell, binding_energy, 1e-15)
+ionization_dist = Collision.createLinLinLogUnitBaseCorrelatedElectroionizationSubshellDistribution( native_data, shell, binding_energy, 1e-12)
 
 print "\nshell = ", shell
 
@@ -101,4 +101,3 @@ for i in range(0,len(energies)):
     print '\tpdf = ','%.16e' % pdf
     dcs = cs*pdf
     print '\tdcs = ','%.16e' % dcs
-

@@ -29,51 +29,60 @@ tot_elastic_cs = native_data.getTotalElasticCrossSection()
 cutoff_cs = native_data.getCutoffElasticCrossSection()
 screen_rutherford_cs = native_data.getScreenedRutherfordElasticCrossSection()
 screen_rutherford_index = native_data.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex()
-moment_cs = native_data.getMomentPreservingCrossSection()
-moment_index = native_data.getMomentPreservingCrossSectionThresholdEnergyIndex()
+cs_reduction = native_data.getMomentPreservingCrossSectionReduction()
+moment_cs = native_data.getTotalElasticCrossSection()
 discrete_energy_grid = native_data.getElasticAngularEnergyGrid()
 
 
 interps = ["LogLogLog", "LinLinLin", "LinLinLog"]
 energies = [1e-4, 1e-3, 1e5 ]
 
+interps = ["LogLogLog"]
+energies = [1e-4]
+
 for interp in interps:
     print "\n----------------------------"
     print "--- ",interp," Pb Tests ---"
     print "----------------------------"
 
-    hybrid_dist = Collision.createLinLinLogExactHybridElasticDistribution(native_data, 0.9, 1e-14)
-    cutoff_dist = Collision.createLinLinLogExactCutoffElasticDistribution(native_data, 0.9, 1e-14)
-    full_cutoff_dist = Collision.createLinLinLogExactCutoffElasticDistribution(native_data, 1.0, 1e-14)
+    hybrid_dist = Collision.createLinLinLogCorrelatedHybridElasticDistribution(native_data, 0.9, 1e-14)
+    cutoff_dist = Collision.createLinLinLogCorrelatedCutoffElasticDistribution(native_data, 0.9, 1e-14)
+    full_cutoff_dist = Collision.createLinLinLogCorrelatedCutoffElasticDistribution(native_data, 1.0, 1e-14)
     if interp == "LinLinLin":
-      hybrid_dist = Collision.createLinLinLinExactHybridElasticDistribution(native_data, 0.9, 1e-14)
-      cutoff_dist = Collision.createLinLinLinExactCutoffElasticDistribution(native_data, 0.9, 1e-14)
-      full_cutoff_dist = Collision.createLinLinLinExactCutoffElasticDistribution(native_data, 1.0, 1e-14)
+      hybrid_dist = Collision.createLinLinLinCorrelatedHybridElasticDistribution(native_data, 0.9, 1e-14)
+      cutoff_dist = Collision.createLinLinLinCorrelatedCutoffElasticDistribution(native_data, 0.9, 1e-14)
+      full_cutoff_dist = Collision.createLinLinLinCorrelatedCutoffElasticDistribution(native_data, 1.0, 1e-14)
     elif interp == "LogLogLog":
-      hybrid_dist = Collision.createLogLogLogExactHybridElasticDistribution(native_data, 0.9, 1e-14)
-      cutoff_dist = Collision.createLogLogLogExactCutoffElasticDistribution(native_data, 0.9, 1e-14)
-      full_cutoff_dist = Collision.createLogLogLogExactCutoffElasticDistribution(native_data, 1.0, 1e-14)
+      hybrid_dist = Collision.createLogLogLogCorrelatedHybridElasticDistribution(native_data, 0.9, 1e-14)
+      cutoff_dist = Collision.createLogLogLogCorrelatedCutoffElasticDistribution(native_data, 0.9, 1e-14)
+      full_cutoff_dist = Collision.createLogLogLogCorrelatedCutoffElasticDistribution(native_data, 1.0, 1e-14)
 
     ###
     ###  Get Sampling Ratios
     ###
-    print '\n--- Calculate Sampling Ratios ---'
+    # print '\n--- Calculate Sampling Ratios ---'
 
-    sampling_ratio = [None]*len(energies)
-    for e in range(0, len(energies) ):
-        energy = energies[e]
-        for i in range(0, cutoff_cs.size ):
-            if energy_grid[i] == energy:
-                print '\nenergy = ', energy_grid[i]
+    # sampling_ratio = [None]*len(energies)
+    # for e in range(0, len(energies) ):
+    #     energy = energies[e]
+    #     for i in range(0, cutoff_cs.size ):
+    #         if energy_grid[i] == energy:
+    #             print '\nenergy[',i,'] = ', energy_grid[i]
 
-                cutoff_cdf = cutoff_dist.evaluateCutoffCrossSectionRatio( energy )
-                reduced_cs = cutoff_cs[i]*cutoff_cdf
-                sampling_ratio[e] = reduced_cs/(moment_cs[i-moment_index]+reduced_cs)
+    #             sr_cs = tot_elastic_cs[i] - cutoff_cs[i]
+    #             rel_diff = sr_cs/tot_elastic_cs[i]
+    #             if rel_diff < 1e-6:
+    #                 sr_cs = 0.0
 
-                print '\tcutoff_cdf = ','%.16e' % cutoff_cdf
-                print '\tcutoff_cs = ','%.16e' % cutoff_cs[i]
-                print '\tmoment_preserving_cs = ','%.16e' % moment_cs[i-moment_index]
-                print '\tsampling_ratio = ','%.16e' % sampling_ratio[e]
+    #             cutoff_cdf = cutoff_dist.evaluateCutoffCrossSectionRatio( energy )
+    #             moment_cs[i] = cs_reduction[?]*(sr_cs + (1.0 - cutoff_cdf)*cutoff_cs[i])
+    #             reduced_cs = cutoff_cs[i]*cutoff_cdf
+    #             sampling_ratio[e] = reduced_cs/(moment_cs[i]+reduced_cs)
+
+    #             print '\tcutoff_cdf = ','%.16e' % cutoff_cdf
+    #             print '\tcutoff_cs = ','%.16e' % cutoff_cs[i]
+    #             print '\tmoment_preserving_cs = ','%.16e' % moment_cs[i]
+    #             print '\tsampling_ratio = ','%.16e' % sampling_ratio[e]
 
     ###
     ###  Evaluate Distribution
@@ -82,14 +91,14 @@ for interp in interps:
 
     for i in range(0, len(energies) ):
         energy = energies[i]
-        ratio = sampling_ratio[i]
+        # ratio = sampling_ratio[i]
         unorm_eval = cutoff_dist.evaluate(energy, 0.9)
-        evaluation = unorm_eval*ratio
+        # evaluation = unorm_eval*ratio
 
         print '\nenergy =', energy
-        print '\tsampling ratio =','%.16e' % ratio
+        # print '\tsampling ratio =','%.16e' % ratio
         print '\tunorm eval =','%.16e' % unorm_eval
-        print '\teval   =','%.16e' % evaluation
+        # print '\teval   =','%.16e' % evaluation
         print '\tresult =','%.16e' % hybrid_dist.evaluate( energy, 0.9 )
 
 
@@ -100,14 +109,14 @@ for interp in interps:
 
     for i in range(0, len(energies) ):
         energy = energies[i]
-        ratio = sampling_ratio[i]
+        # ratio = sampling_ratio[i]
         unorm_pdf = cutoff_dist.evaluatePDF(energy, 0.9)
-        pdf = unorm_pdf*ratio
+        # pdf = unorm_pdf*ratio
 
         print '\nenergy =', energy
-        print '\tsampling ratio =','%.16e' % ratio
+        # print '\tsampling ratio =','%.16e' % ratio
         print '\tunorm pdf =','%.16e' % unorm_pdf
-        print '\tpdf   =','%.16e' % pdf
+        # print '\tpdf   =','%.16e' % pdf
         print '\tresult =','%.16e' % hybrid_dist.evaluatePDF( energy, 0.9 )
 
     ###
@@ -117,14 +126,14 @@ for interp in interps:
 
     for i in range(0, len(energies) ):
         energy = energies[i]
-        ratio = sampling_ratio[i]
+        # ratio = sampling_ratio[i]
         unorm_cdf = cutoff_dist.evaluateCDF(energy, 0.9)
-        cdf = unorm_cdf*ratio
+        # cdf = unorm_cdf*ratio
 
         print '\nenergy =', energy
-        print '\tsampling ratio =','%.16e' % ratio
+        # print '\tsampling ratio =','%.16e' % ratio
         print '\tunorm cdf =','%.16e' % unorm_cdf
-        print '\tcdf   =','%.16e' % cdf
+        # print '\tcdf   =','%.16e' % cdf
         print '\tresult =','%.16e' % hybrid_dist.evaluateCDF( energy, 0.9 )
         print '\tright below =','%.16e' % hybrid_dist.evaluateCDF( energy, 0.9-1e-10 )
         print '\tright above =','%.16e' % hybrid_dist.evaluateCDF( energy, 0.9+1e-10 )
@@ -145,8 +154,8 @@ for interp in interps:
             print '\tcutoff_cdf      = ','%.16e' % cutoff_cdf
             print '\tfull_cutoff_cdf = ','%.16e' % full_cutoff_cdf
             print '\tcutoff_cs = ','%.16e' % cutoff_cs[i]
-            print '\tmoment_preserving_cs = ','%.16e' % moment_cs[i-moment_index]
-            cross_section_ratio = cutoff_cs[i]*cutoff_cdf/moment_cs[i-moment_index]
+            print '\tmoment_preserving_cs = ','%.16e' % moment_cs[i]
+            cross_section_ratio = cutoff_cs[i]*cutoff_cdf/moment_cs[i]
             print '\tcross section ratio = ','%.16e' % cross_section_ratio
             sampling_ratio = cross_section_ratio/(1.0+cross_section_ratio)
             print '\tsampling_ratio = ','%.16e' % sampling_ratio
@@ -179,11 +188,11 @@ for interp in interps:
 
 
     energy = 1e-4
-    mp_dist = Collision.createLinLinLogExactMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
+    mp_dist = Collision.createLinLinLogCorrelatedMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
     if interp == "LinLinLin":
-      mp_dist = Collision.createLinLinLinExactMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
+      mp_dist = Collision.createLinLinLinCorrelatedMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
     elif interp == "LogLogLog":
-      mp_dist = Collision.createLogLogLogExactMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
+      mp_dist = Collision.createLogLogLogCorrelatedMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
     cutoff_cdf = cutoff_dist.evaluateCutoffCrossSectionRatio( energy )
 
     for i in range(0, cutoff_cs.size ):
@@ -191,8 +200,8 @@ for interp in interps:
             print '\nenergy = ', energy_grid[i]
             print '\tcutoff_cdf = ','%.16e' % cutoff_cdf
             print '\tcutoff_cs = ','%.16e' % cutoff_cs[i]
-            print '\tmoment_preserving_cs = ','%.16e' % moment_cs[i-moment_index]
-            cross_section_ratio = cutoff_cs[i]*cutoff_cdf/moment_cs[i-moment_index]
+            print '\tmoment_preserving_cs = ','%.16e' % moment_cs[i]
+            cross_section_ratio = cutoff_cs[i]*cutoff_cdf/moment_cs[i]
             print '\tcross section ratio = ','%.16e' % cross_section_ratio
             sampling_ratio = cross_section_ratio/(1.0+cross_section_ratio)
             print '\tsampling_ratio = ','%.16e' % sampling_ratio
@@ -302,7 +311,6 @@ cutoff_cs = native_data.getAdjointCutoffElasticCrossSection()
 screen_rutherford_cs = native_data.getAdjointScreenedRutherfordElasticCrossSection()
 screen_rutherford_index = native_data.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex()
 moment_cs = native_data.getAdjointMomentPreservingCrossSection()
-moment_index = native_data.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex()
 
 
 discrete_energy_grid = native_data.getAdjointElasticAngularEnergyGrid()
@@ -316,9 +324,9 @@ partial_cutoff_dist = Collision.createCutoffElasticDistribution(native_data, 0.9
 full_cutoff_dist = Collision.createCutoffElasticDistribution(native_data, 1.0, True, True, 1e-15)
 hybrid_dist = Collision.createHybridElasticDistribution(native_data, 0.9, True, True, 1e-15)
 if interp == "LinLinLin":
-  mp_dist = Collision.createLinLinLinExactMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
+  mp_dist = Collision.createLinLinLinCorrelatedMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
 elif interp == "LogLogLog":
-  mp_dist = Collision.createLogLogLogExactMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
+  mp_dist = Collision.createLogLogLogCorrelatedMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
 
 partial_cutoff_dist = Collision.createCutoffElasticDistribution(native_data, 0.9, True, True, 1e-15)
 full_cutoff_dist = Collision.createCutoffElasticDistribution(native_data, 1.0, True, True, 1e-15)
@@ -335,9 +343,9 @@ print '\nenergy_0 = ', energy_0
 print '\tcutoff_cdf_0 = ','%.16e' % cutoff_cdf_0
 cutoff_cs_0 = cutoff_cs[index]
 print '\tcutoff_cs_0 = ','%.16e' % cutoff_cs_0
-moment_cs_0 = moment_cs[index-moment_index]
+moment_cs_0 = moment_cs[index]
 print '\tmoment_preserving_cs_0 = ','%.16e' % moment_cs_0
-cross_section_ratio_0 = cutoff_cs[index]*cutoff_cdf_0/moment_cs[index-moment_index]
+cross_section_ratio_0 = cutoff_cs[index]*cutoff_cdf_0/moment_cs[index]
 print '\tcross section ratio_0 = ','%.16e' % cross_section_ratio_0
 #cross_section_ratio_0 = hybrid_dist.getCrossSectionRatio( energy_0 )
 #print '\tcross section ratio_0 = ','%.16e' % cross_section_ratio_0
@@ -350,9 +358,9 @@ print '\nenergy_1 = ', energy_1
 print '\tcutoff_cdf_1 = ','%.16e' % cutoff_cdf_1
 cutoff_cs_1 = cutoff_cs[index+1]
 print '\tcutoff_cs_1 = ','%.16e' % cutoff_cs_0
-moment_cs_1 = moment_cs[index+1-moment_index]
+moment_cs_1 = moment_cs[index+1]
 print '\tmoment_preserving_cs_1 = ','%.16e' % moment_cs_1
-cross_section_ratio_1 = cutoff_cs[index+1]*cutoff_cdf_1/moment_cs[index+1-moment_index]
+cross_section_ratio_1 = cutoff_cs[index+1]*cutoff_cdf_1/moment_cs[index+1]
 print '\tcross section ratio_1 = ','%.16e' % cross_section_ratio_1
 #cross_section_ratio_1 = hybrid_dist.getCrossSectionRatio( energy_1 )
 #print '\tcross section ratio_1 = ','%.16e' % cross_section_ratio_1

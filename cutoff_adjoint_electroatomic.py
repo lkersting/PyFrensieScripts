@@ -31,8 +31,6 @@ adjoint_cutoff_cs = adjoint_data.getAdjointCutoffElasticCrossSection()
 reduced_cutoff_ratio = adjoint_data.getReducedCutoffCrossSectionRatios()
 adjoint_screen_rutherford_cs = adjoint_data.getAdjointScreenedRutherfordElasticCrossSection()
 adjoint_screen_rutherford_index = adjoint_data.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex()
-adjoint_moment_cs = adjoint_data.getAdjointMomentPreservingCrossSection()
-adjoint_moment_index = adjoint_data.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex()
 
 adjoint_excitation_cs = adjoint_data.getAdjointAtomicExcitationCrossSection()
 adjoint_ionization_cs = adjoint_data.getAdjointElectroionizationCrossSection(1)
@@ -41,11 +39,11 @@ adjoint_brem_cs = adjoint_data.getAdjointBremsstrahlungElectronCrossSection()
 ###
 ###  Cutoff Distribution/Reaction Unit Test Check
 ###
-adjoint_cutoff_dist = Collision.createLogLogLogExactCutoffElasticDistribution(adjoint_data, 1.0, 1e-7)
+adjoint_cutoff_dist = Collision.createLogLogLogCorrelatedCutoffElasticDistribution(adjoint_data, 1.0, 1e-7)
 cutoff_cdf = adjoint_cutoff_dist.evaluateCDF( 20.0, 0.9 )
 ratio = reduced_cutoff_ratio[reduced_cutoff_ratio.size -1]
 cutoff_cs = adjoint_cutoff_cs[reduced_cutoff_ratio.size -1]
-moment_cs = adjoint_moment_cs[reduced_cutoff_ratio.size -1]
+
 
 print 'cutoff_cdf = ','%.16e' % cutoff_cdf
 print 'ratio      = ','%.16e' % ratio
@@ -58,7 +56,7 @@ cutoff_cdf = adjoint_cutoff_dist.evaluateCDF( 1e-5, 0.9 )
 print 'cutoff_cdf = ','%.16e' % cutoff_cdf
 
 # change cutoff
-adjoint_cutoff_dist = Collision.createLogLogLogExactCutoffElasticDistribution(adjoint_data, 0.9, 1e-7)
+adjoint_cutoff_dist = Collision.createLogLogLogCorrelatedCutoffElasticDistribution(adjoint_data, 0.9, 1e-7)
 
 cutoff_cdf = adjoint_cutoff_dist.evaluateCutoffCrossSectionRatio( 20.0 )
 print 'cutoff_cdf = ','%.16e' % cutoff_cdf

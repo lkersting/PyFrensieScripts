@@ -43,7 +43,7 @@ angles = [-1.0, 0.0, 0.999999, 1.0]
 ###  Coupled Distribution/Reaction Unit Test Check
 ###
 
-adjoint_dist = Collision.createLinLinLogExactCoupledElasticDistribution(adjoint_data, "Simplified Union", 1e-7)
+adjoint_dist = Collision.createLinLinLogDirectCoupledElasticDistribution(adjoint_data, "Simplified Union", 1e-7)
 
 print "\n------------------------------------------------"
 print "\nAdjoint Coupled"
@@ -96,7 +96,7 @@ print "Adjoint Cutoff"
 print "------------------------------------------------"
 
 angles = [-1.0, 0.0, 0.9, 0.9001]
-adjoint_dist = Collision.createLinLinLogExactCutoffElasticDistribution(adjoint_data, 0.9, 1e-7)
+adjoint_dist = Collision.createLinLinLogDirectCutoffElasticDistribution(adjoint_data, 0.9, 1e-7)
 
 print "\nAdjoint Cutoff evaluate"
 print "------------------------------------------------"
@@ -146,25 +146,25 @@ print "------------------------------------------------"
 
 energies = [ 3.2e-2, 1.0e-2]
 angles = [0.0, 0.9, 0.9001]
-adjoint_dist = Collision.createLinLinLogExactHybridElasticDistribution(adjoint_data, 0.9, 1e-7)
+adjoint_dist = Collision.createLinLinLogDirectHybridElasticDistribution(adjoint_data, 0.9, 1e-7)
 
-print "\nAdjoint Hybrid evaluate"
-print "------------------------------------------------"
+# print "\nAdjoint Hybrid evaluate"
+# print "------------------------------------------------"
 
-for energy in energies:
-    print "\n---- energy =", energy, "----"
-    for angle in angles:
-        pdf = adjoint_dist.evaluate( energy, angle )
-        print '\teval(', '%.5e' % angle,') =\t','%.16e' % pdf
+# for energy in energies:
+#     print "\n---- energy =", energy, "----"
+#     for angle in angles:
+#         pdf = adjoint_dist.evaluate( energy, angle )
+#         print '\teval(', '%.5e' % angle,') =\t','%.16e' % pdf
 
-print "\nAdjoint Hybrid evaluatePDF"
-print "------------------------------------------------"
+# print "\nAdjoint Hybrid evaluatePDF"
+# print "------------------------------------------------"
 
-for energy in energies:
-    print "\n---- energy =", energy, "----"
-    for angle in angles:
-        pdf = adjoint_dist.evaluatePDF( energy, angle )
-        print '\tpdf(', '%.5e' % angle,') =\t','%.16e' % pdf
+# for energy in energies:
+#     print "\n---- energy =", energy, "----"
+#     for angle in angles:
+#         pdf = adjoint_dist.evaluatePDF( energy, angle )
+#         print '\tpdf(', '%.5e' % angle,') =\t','%.16e' % pdf
 
 print "\nAdjoint Hybrid evaluateCDF"
 print "------------------------------------------------"
@@ -198,7 +198,7 @@ angular_energy_grid = adjoint_data.getAdjointElasticAngularEnergyGrid()
 
 energies = [ 3.2e-2, 1.0e-2]
 angles = [0.0, 0.9, 0.9001]
-adjoint_dist = Collision.createLinLinLogExactMomentPreservingElasticDistribution(adjoint_data, 0.9, 1e-7)
+adjoint_dist = Collision.createLinLinLogDirectMomentPreservingElasticDistribution(adjoint_data, 0.9, 1e-7)
 
 discrete_angles = adjoint_data.getAdjointMomentPreservingElasticDiscreteAngles( 3.2e-2 )
 lower_discrete_angles = adjoint_data.getAdjointMomentPreservingElasticDiscreteAngles( 8e-3 )
@@ -212,38 +212,38 @@ print '%.16e' % discrete_angles[0]
 print '%.16e' % discrete_angles[1]
 
 angles = [ lower_discrete_angles[0], lower_discrete_angles[1],upper_discrete_angles[0],upper_discrete_angles[1],discrete_angles[0],discrete_angles[1] ]
-print "\nAdjoint Moment Preserving evaluate"
-print "------------------------------------------------"
+# print "\nAdjoint Moment Preserving evaluate"
+# print "------------------------------------------------"
 
-for energy in energies:
-    print "\n---- energy =", energy, "----"
-    for angle in angles:
-        pdf = adjoint_dist.evaluate( energy, angle )
-        print '\teval(', '%.16e' % angle,') =\t','%.16e' % pdf
+# for energy in energies:
+#     print "\n---- energy =", energy, "----"
+#     for angle in angles:
+#         pdf = adjoint_dist.evaluate( energy, angle )
+#         print '\teval(', '%.16e' % angle,') =\t','%.16e' % pdf
 
-print "\nAdjoint Moment Preserving evaluatePDF"
-print "------------------------------------------------"
+# print "\nAdjoint Moment Preserving evaluatePDF"
+# print "------------------------------------------------"
 
-for energy in energies:
-    print "\n---- energy =", energy, "----"
-    for angle in angles:
-        pdf = adjoint_dist.evaluatePDF( energy, angle )
-        print '\tpdf(', '%.16e' % angle,') =\t','%.16e' % pdf
+# for energy in energies:
+#     print "\n---- energy =", energy, "----"
+#     for angle in angles:
+#         pdf = adjoint_dist.evaluatePDF( energy, angle )
+#         print '\tpdf(', '%.16e' % angle,') =\t','%.16e' % pdf
 
-print "\nAdjoint Moment Preserving evaluateCDF"
-print "------------------------------------------------"
+# print "\nAdjoint Moment Preserving evaluateCDF"
+# print "------------------------------------------------"
 
-for energy in energies:
-    print "\n---- energy =", energy, "----"
-    for angle in angles:
-        cdf = adjoint_dist.evaluateCDF( energy, angle )
-        print '\tcdf(', '%.16e' % angle,') =\t','%.16e' % cdf
+# for energy in energies:
+#     print "\n---- energy =", energy, "----"
+#     for angle in angles:
+#         cdf = adjoint_dist.evaluateCDF( energy, angle )
+#         print '\tcdf(', '%.16e' % angle,') =\t','%.16e' % cdf
 
 
 print "\nAdjoint Moment Preserving sample"
 print "------------------------------------------------"
 
-random_numbers = [ 0.0, 1.0-1e-15, 0.0, 1.0-1e-15 ]
+random_numbers = [ 0.0, 0.0, 1.0-1e-15, 1.0-1e-15, 0.0, 0.0, 1.0-1e-15, 1.0-1e-15 ]
 for energy in energies:
     Prng.RandomNumberGenerator.setFakeStream(random_numbers)
     print "\n---- energy =", energy, "----"
@@ -261,7 +261,7 @@ print "------------------------------------------------"
 
 energies = [ 1e-5, 1.0e-3]
 e_outs = [0.0, 1.0, 20.0]
-adjoint_dist = Collision.createLinLinLogCorrelatedBremsstrahlungDistribution(adjoint_data, 1e-7)
+adjoint_dist = Collision.createLogLogLogUnitBaseCorrelatedBremsstrahlungDistribution(adjoint_data, 1e-7)
 
 print "\nAdjoint Bremsstrahlung evaluate"
 print "------------------------------------------------"
@@ -272,7 +272,7 @@ for energy in energies:
         if e_out < energy:
             e_out = 2.0*energy
         pdf = adjoint_dist.evaluate( energy, e_out )
-        print '\teval(', '%.16e' % e_out,') =\t','%.16e' % pdf
+        print '\teval(', '%.6e' % e_out,') =\t','%.16e' % pdf
 
 print "\nAdjoint Bremsstrahlung evaluatePDF"
 print "------------------------------------------------"
@@ -283,7 +283,7 @@ for energy in energies:
         if e_out < energy:
             e_out = 2.0*energy
         pdf = adjoint_dist.evaluatePDF( energy, e_out )
-        print '\teval(', '%.16e' % e_out,') =\t','%.16e' % pdf
+        print '\teval(', '%.6e' % e_out,') =\t','%.16e' % pdf
 
 print "\nAdjoint Bremsstrahlung evaluateCDF"
 print "------------------------------------------------"
@@ -294,7 +294,7 @@ for energy in energies:
         if e_out < energy:
             e_out = 2.0*energy
         pdf = adjoint_dist.evaluateCDF( energy, e_out )
-        print '\teval(', '%.16e' % e_out,') =\t','%.16e' % pdf
+        print '\teval(', '%.6e' % e_out,') =\t','%.16e' % pdf
 
 
 print "\nAdjoint Bremsstrahlung sample"
@@ -334,7 +334,7 @@ e_outs = [0.0, 1.0, 20.0]
 
 shell = 1
 binding_energy = adjoint_data.getSubshellBindingEnergy( shell )
-adjoint_dist = Collision.createLinLinLogCorrelatedElectroionizationSubshellDistribution(adjoint_data, shell, binding_energy, 1e-7)
+adjoint_dist = Collision.createLogLogLogUnitBaseCorrelatedElectroionizationSubshellDistribution(adjoint_data, shell, binding_energy, 1e-7)
 
 print 'Binding energy =\t','%.16e' % binding_energy
 
@@ -347,7 +347,7 @@ for energy in energies:
         if e_out < energy:
             e_out = 2.0*energy + binding_energy
         pdf = adjoint_dist.evaluate( energy, e_out )
-        print '\teval(', '%.16e' % e_out,') =\t','%.16e' % pdf
+        print '\teval(', '%.6e' % e_out,') =\t','%.16e' % pdf
 
 print "\nAdjoint Electroionization evaluatePDF"
 print "------------------------------------------------"
@@ -358,7 +358,7 @@ for energy in energies:
         if e_out < energy:
             e_out = 2.0*energy + binding_energy
         pdf = adjoint_dist.evaluatePDF( energy, e_out )
-        print '\teval(', '%.16e' % e_out,') =\t','%.16e' % pdf
+        print '\teval(', '%.6e' % e_out,') =\t','%.16e' % pdf
 
 print "\nAdjoint Electroionization evaluateCDF"
 print "------------------------------------------------"
@@ -369,7 +369,7 @@ for energy in energies:
         if e_out < energy:
             e_out = 2.0*energy + binding_energy
         pdf = adjoint_dist.evaluateCDF( energy, e_out )
-        print '\teval(', '%.16e' % e_out,') =\t','%.16e' % pdf
+        print '\teval(', '%.6e' % e_out,') =\t','%.16e' % pdf
 
 
 print "\nAdjoint Electroionization sample"

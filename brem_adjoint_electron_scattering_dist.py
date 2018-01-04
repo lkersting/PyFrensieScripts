@@ -71,7 +71,7 @@ print "energy = ", energy
 print '\tcs = ','%.16e' % adjoint_brem_cs[adjoint_brem_cs.size -1]
 
 
-brem_dist = Collision.createLogLogLogCorrelatedBremsstrahlungDistribution(adjoint_data, 1e-7)
+brem_dist = Collision.createLogLogLogUnitBaseCorrelatedBremsstrahlungDistribution(adjoint_data, 1e-7)
 
 E_in = [1e-6, 1e-5, 1.1e-5, 20.0, 21.0]
 E_out = [2.0e-5, 20.2, 1.0, 20.000000201, 22.0]

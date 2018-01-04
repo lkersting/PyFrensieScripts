@@ -25,7 +25,7 @@ native_file_name = datadir + data_list.get( 'electroatomic_file_path' )
 native_data = Native.ElectronPhotonRelaxationDataContainer( native_file_name )
 
 ###
-###  Hybrid Distribution Pyfrensie Unit Test Check
+###  Hybrid Distribution PyFrensie Unit Test Check
 ###
 interpolations = ["LinLinLin", "LinLinLog", "LogLogLog"]
 energies = [1e5, 1e-3, 4e-4]
@@ -37,7 +37,7 @@ interpolations = ["LinLinLog"]
 for interp in interpolations:
     print "\n\n\t-----",interp,"-----"
 
-    hybrid_dist = Collision.createHybridElasticDistribution(native_data, 0.9, interp, True, 1e-15)
+    hybrid_dist = Collision.createLinLinLogCorrelatedHybridElasticDistribution(native_data, 0.9, 1e-15)
 
     for energy in energies:
         print "Energy = ",energy

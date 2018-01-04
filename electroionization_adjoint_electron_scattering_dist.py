@@ -17,194 +17,224 @@ source = Teuchos.FileInputSource( datadir + '/cross_sections.xml' )
 xml_obj = source.getObject()
 cs_list = Teuchos.XMLParameterListReader().toParameterList( xml_obj )
 
-# -------------------------------------------------------------------------- ##
-#  Adjoint Electroionization Data
-# -------------------------------------------------------------------------- ##
-# data_list = cs_list.get( 'C-Native' )
-# adjoint_file_name = datadir + data_list.get( 'adjoint_electroatomic_file_path' )
-# adjoint_data = Native.AdjointElectronPhotonRelaxationDataContainer( adjoint_file_name )
-# adjoint_energy_grid = adjoint_data.getAdjointElectronEnergyGrid()
+## -------------------------------------------------------------------------- ##
+##  Adjoint Electroionization Data
+## -------------------------------------------------------------------------- ##
+data_list = cs_list.get( 'C-Native' )
+adjoint_file_name = datadir + data_list.get( 'adjoint_electroatomic_file_path' )
+adjoint_data = Native.AdjointElectronPhotonRelaxationDataContainer( adjoint_file_name )
+adjoint_energy_grid = adjoint_data.getAdjointElectronEnergyGrid()
 
-# ###
-# ###  Electroionization Reaction Unit Test Check
-# ###
-# print "\n----- C -----"
-# subshells = adjoint_data.getSubshells()
-# shell = subshells[0]
-# adjoint_ionization_cs = adjoint_data.getAdjointElectroionizationCrossSection(shell)
+###
+###  Electroionization Reaction Unit Test Check
+###
+print "\n----- C -----"
+subshells = adjoint_data.getSubshells()
+shell = subshells[0]
+adjoint_ionization_cs = adjoint_data.getAdjointElectroionizationCrossSection(shell)
 
-# print "\nshell = ", shell
+print "\nshell = ", shell
 
-# energy = 1e-5
-# print "energy = ", energy
-# print '\tcs = ','%.16e' % adjoint_ionization_cs[0]
+energy = 1e-5
+print "energy = ", energy
+print '\tcs = ','%.16e' % adjoint_ionization_cs[0]
 
-# energy = 1.5
-# index = 0
-# for i in range(0, adjoint_energy_grid.size ):
-#     if adjoint_energy_grid[i] <= energy:
-#         index = i
+energy = 1.5
+index = 0
+for i in range(0, adjoint_energy_grid.size ):
+    if adjoint_energy_grid[i] <= energy:
+        index = i
 
-# energy_0 = adjoint_energy_grid[index]
-# cs_0 = adjoint_ionization_cs[index]
-# energy_1 = adjoint_energy_grid[index+1]
-# cs_1 = adjoint_ionization_cs[index+1]
+energy_0 = adjoint_energy_grid[index]
+cs_0 = adjoint_ionization_cs[index]
+energy_1 = adjoint_energy_grid[index+1]
+cs_1 = adjoint_ionization_cs[index+1]
 
-# print "energy = ", energy
-# cs = cs_0 + (cs_1 - cs_0)*( energy - energy_0 )/( energy_1 - energy_0 )
-# print '\tcs = ','%.16e' % cs
+print "energy = ", energy
+cs = cs_0 + (cs_1 - cs_0)*( energy - energy_0 )/( energy_1 - energy_0 )
+print '\tcs = ','%.16e' % cs
 
+energy = 1e-3
+index = 0
+for i in range(0, adjoint_energy_grid.size ):
+    if adjoint_energy_grid[i] <= energy:
+        index = i
 
-# energy = 20.0
-# print "energy = ", energy
-# print '\tcs = ','%.16e' % adjoint_ionization_cs[adjoint_ionization_cs.size -1]
+energy_0 = adjoint_energy_grid[index]
+cs_0 = adjoint_ionization_cs[index]
+energy_1 = adjoint_energy_grid[index+1]
+cs_1 = adjoint_ionization_cs[index+1]
 
+print "energy = ", energy
+cs = cs_0 + (cs_1 - cs_0)*( energy - energy_0 )/( energy_1 - energy_0 )
+print '\tcs = ','%.16e' % cs
 
-# # Last subshell
-# shell = subshells[len(subshells) -1]
-# adjoint_ionization_cs = adjoint_data.getAdjointElectroionizationCrossSection(shell)
-
-# print "\nshell = ", shell
-# energy = 1e-5
-# print "energy = ", energy
-# print '\tcs = ','%.16e' % adjoint_ionization_cs[0]
-
-# energy = 1.5
-# index = 0
-# for i in range(0, adjoint_energy_grid.size ):
-#     if adjoint_energy_grid[i] <= energy:
-#         index = i
-
-# energy_0 = adjoint_energy_grid[index]
-# cs_0 = adjoint_ionization_cs[index]
-# energy_1 = adjoint_energy_grid[index+1]
-# cs_1 = adjoint_ionization_cs[index+1]
-
-# print "energy = ", energy
-# cs = cs_0 + (cs_1 - cs_0)*( energy - energy_0 )/( energy_1 - energy_0 )
-# print '\tcs = ','%.16e' % cs
+energy = 20.0
+print "energy = ", energy
+print '\tcs = ','%.16e' % adjoint_ionization_cs[adjoint_ionization_cs.size -1]
 
 
-# energy = 20.0
-# print "energy = ", energy
-# print '\tcs = ','%.16e' % adjoint_ionization_cs[adjoint_ionization_cs.size -1]
+# Last subshell
+shell = subshells[len(subshells) -1]
+adjoint_ionization_cs = adjoint_data.getAdjointElectroionizationCrossSection(shell)
 
-# ###
-# ###  Electroionization Distribution Unit Test Check
-# ###
-# print "\n----- H -----"
-# data_list = cs_list.get( 'H-Native' )
-# adjoint_file_name = datadir + data_list.get( 'adjoint_electroatomic_file_path' )
-# adjoint_data = Native.AdjointElectronPhotonRelaxationDataContainer( adjoint_file_name )
-# adjoint_energy_grid = adjoint_data.getAdjointElectronEnergyGrid()
-# adjoint_ionization_cs = adjoint_data.getAdjointElectroionizationCrossSection(1)
+print "\nshell = ", shell
+energy = 1e-5
+print "energy = ", energy
+print '\tcs = ','%.16e' % adjoint_ionization_cs[0]
 
+energy = 1.5
+index = 0
+for i in range(0, adjoint_energy_grid.size ):
+    if adjoint_energy_grid[i] <= energy:
+        index = i
 
-# subshells = adjoint_data.getSubshells()
-# shell = subshells[0]
-# binding_energy = adjoint_data.getSubshellBindingEnergy( shell )
+energy_0 = adjoint_energy_grid[index]
+cs_0 = adjoint_ionization_cs[index]
+energy_1 = adjoint_energy_grid[index+1]
+cs_1 = adjoint_ionization_cs[index+1]
 
-# adjoint_ionization_cs = adjoint_data.getAdjointElectroionizationCrossSection(shell)
+print "energy = ", energy
+cs = cs_0 + (cs_1 - cs_0)*( energy - energy_0 )/( energy_1 - energy_0 )
+print '\tcs = ','%.16e' % cs
 
-# print "\nshell = ", shell
+energy = 1e-3
+index = 0
+for i in range(0, adjoint_energy_grid.size ):
+    if adjoint_energy_grid[i] <= energy:
+        index = i
 
-# energy = 1e-5
-# print "energy = ", energy
-# print '\tcs = ','%.16e' % adjoint_ionization_cs[0]
+energy_0 = adjoint_energy_grid[index]
+cs_0 = adjoint_ionization_cs[index]
+energy_1 = adjoint_energy_grid[index+1]
+cs_1 = adjoint_ionization_cs[index+1]
 
-# energy = 1e-3
-# index = 0
-# for i in range(0, adjoint_energy_grid.size ):
-#     if adjoint_energy_grid[i] <= energy:
-#         index = i
+print "energy = ", energy
+cs = cs_0 + (cs_1 - cs_0)*( energy - energy_0 )/( energy_1 - energy_0 )
+print '\tcs = ','%.16e' % cs
 
-# energy_0 = adjoint_energy_grid[index]
-# cs_0 = adjoint_ionization_cs[index]
-# energy_1 = adjoint_energy_grid[index+1]
-# cs_1 = adjoint_ionization_cs[index+1]
+energy = 20.0
+print "energy = ", energy
+print '\tcs = ','%.16e' % adjoint_ionization_cs[adjoint_ionization_cs.size -1]
 
-# print "energy = ", energy
-# cs = cs_0 + (cs_1 - cs_0)*( energy - energy_0 )/( energy_1 - energy_0 )
-# print '\tcs = ','%.16e' % cs
-
-# energy = 20.0
-# print "energy = ", energy
-# print '\tcs = ','%.16e' % adjoint_ionization_cs[adjoint_ionization_cs.size -1]
-
-
-
-
-# interpolations = ["LogLogLog", "LinLinLog" ]
-
-# for interp in interpolations:
-#     ionization_dist = Collision.createLogLogLogCorrelatedElectroionizationSubshellDistribution( adjoint_data, shell, binding_energy, 1e-7)
-#     if interp = "LinLinLog":
-#       ionization_dist = Collision.createLinLinLogCorrelatedElectroionizationSubshellDistribution( adjoint_data, shell, binding_energy, 1e-7)
-#     print "\n--- ",interp," ---"
-#     print "\nEvaluate"
-
-#     pdf = ionization_dist.evaluate( 9.99e-6, 2.3711E-5 )
-#     print "\teval 1 = ",'%.16e' % pdf
-
-#     pdf = ionization_dist.evaluate( 1e-5, 2.3711E-5 )
-#     print "\teval 2 = ",'%.16e' % pdf
-
-#     pdf = ionization_dist.evaluate( 1.1e-5, 0.2 )
-#     print "\teval 3 = ",'%.16e' % pdf
-
-#     pdf = ionization_dist.evaluate( 20.0, 20.00002722 )
-#     print "\teval 4 = ",'%.16e' % pdf
-
-#     pdf = ionization_dist.evaluate( 20.01, 22.1 )
-#     print "\teval 5 = ",'%.16e' % pdf
-
-#     print "\nEvaluate PDF"
-
-#     pdf = ionization_dist.evaluatePDF( 9.99e-6, 2.3711E-5 )
-#     print "\tpdf 1 = ",'%.16e' % pdf
-
-#     pdf = ionization_dist.evaluatePDF( 1e-5, 2.3711E-5 )
-#     print "\tpdf 2 = ",'%.16e' % pdf
-
-#     pdf = ionization_dist.evaluatePDF( 1.1e-5, 0.2 )
-#     print "\tpdf 3 = ",'%.16e' % pdf
-
-#     pdf = ionization_dist.evaluatePDF( 20.0, 20.00002722 )
-#     print "\tpdf 4 = ",'%.16e' % pdf
-
-#     pdf = ionization_dist.evaluatePDF( 20.01, 22.1 )
-#     print "\tpdf 5 = ",'%.16e' % pdf
-
-#     print "\nEvaluate CDF"
-
-#     cdf = ionization_dist.evaluateCDF( 9.99e-6, 1.361e-5 )
-#     print "\tcdf 1 = ",'%.16e' % cdf
-
-#     cdf = ionization_dist.evaluateCDF( 1e-5, 0.2 )
-#     print "\tcdf 2 = ",'%.16e' % cdf
-
-#     cdf = ionization_dist.evaluateCDF( 1.1e-5, 0.2 )
-#     print "\tcdf 3 = ",'%.16e' % cdf
-
-#     cdf = ionization_dist.evaluateCDF( 20.0, 20.00002722 )
-#     print "\tcdf 4 = ",'%.16e' % cdf
-
-#     cdf = ionization_dist.evaluateCDF( 20.01, 22.1 )
-#     print "\tcdf 5 = ",'%.16e' % cdf
+###
+###  Electroionization Distribution Unit Test Check
+###
+print "\n----- H -----"
+data_list = cs_list.get( 'H-Native' )
+adjoint_file_name = datadir + data_list.get( 'adjoint_electroatomic_file_path' )
+adjoint_data = Native.AdjointElectronPhotonRelaxationDataContainer( adjoint_file_name )
+adjoint_energy_grid = adjoint_data.getAdjointElectronEnergyGrid()
+adjoint_ionization_cs = adjoint_data.getAdjointElectroionizationCrossSection(1)
 
 
-#     random_numbers = [ 0.0, 0.1 ]
-#     Prng.RandomNumberGenerator.setFakeStream(random_numbers)
+subshells = adjoint_data.getSubshells()
+shell = subshells[0]
+binding_energy = adjoint_data.getSubshellBindingEnergy( shell )
 
-#     incoming_energies = [1e-3, 1e-5]
+adjoint_ionization_cs = adjoint_data.getAdjointElectroionizationCrossSection(shell)
 
-#     i = 0
-#     for incoming_energy in incoming_energies:
-#         outgoing_energy, scattering_angle = ionization_dist.sample( incoming_energy )
-#         print "\n\tincoming_energy =", incoming_energy,"\trandom_number =",random_numbers[i]
-#         print "\noutgoing_energy = ",'%.16e' % outgoing_energy
-#         print "scattering_angle = ",'%.16e' % scattering_angle
-#         i = i+1
+print "\nshell = ", shell
+
+energy = 1e-5
+print "energy = ", energy
+print '\tcs = ','%.16e' % adjoint_ionization_cs[0]
+
+energy = 1e-3
+index = 0
+for i in range(0, adjoint_energy_grid.size ):
+    if adjoint_energy_grid[i] <= energy:
+        index = i
+
+energy_0 = adjoint_energy_grid[index]
+cs_0 = adjoint_ionization_cs[index]
+energy_1 = adjoint_energy_grid[index+1]
+cs_1 = adjoint_ionization_cs[index+1]
+
+print "energy = ", energy
+cs = cs_0 + (cs_1 - cs_0)*( energy - energy_0 )/( energy_1 - energy_0 )
+print '\tcs = ','%.16e' % cs
+
+energy = 20.0
+print "energy = ", energy
+print '\tcs = ','%.16e' % adjoint_ionization_cs[adjoint_ionization_cs.size -1]
+
+
+
+
+interpolations = ["LogLogLog", "LinLinLog" ]
+
+for interp in interpolations:
+    ionization_dist = Collision.createLogLogLogUnitBaseCorrelatedElectroionizationSubshellDistribution( adjoint_data, shell, binding_energy, 1e-10)
+    if interp == "LinLinLog":
+      ionization_dist = Collision.createLinLinLogUnitBaseCorrelatedElectroionizationSubshellDistribution( adjoint_data, shell, binding_energy, 1e-10)
+    if interp == "LinLinLin":
+      ionization_dist = Collision.createLinLinLinUnitBaseCorrelatedElectroionizationSubshellDistribution( adjoint_data, shell, binding_energy, 1e-10)
+    print "\n--- ",interp," ---"
+    print "\nEvaluate"
+
+    pdf = ionization_dist.evaluate( 9.99e-6, 2.3711E-5 )
+    print "\teval 1 = ",'%.16e' % pdf
+
+    pdf = ionization_dist.evaluate( 1e-5, 2.3711E-5 )
+    print "\teval 2 = ",'%.16e' % pdf
+
+    pdf = ionization_dist.evaluate( 1.1e-5, 0.2 )
+    print "\teval 3 = ",'%.16e' % pdf
+
+    pdf = ionization_dist.evaluate( 20.0, 20.00002722 )
+    print "\teval 4 = ",'%.16e' % pdf
+
+    pdf = ionization_dist.evaluate( 20.01, 22.1 )
+    print "\teval 5 = ",'%.16e' % pdf
+
+    print "\nEvaluate PDF"
+
+    pdf = ionization_dist.evaluatePDF( 9.99e-6, 2.3711E-5 )
+    print "\tpdf 1 = ",'%.16e' % pdf
+
+    pdf = ionization_dist.evaluatePDF( 1e-5, 2.3711E-5 )
+    print "\tpdf 2 = ",'%.16e' % pdf
+
+    pdf = ionization_dist.evaluatePDF( 1.1e-5, 0.2 )
+    print "\tpdf 3 = ",'%.16e' % pdf
+
+    pdf = ionization_dist.evaluatePDF( 20.0, 20.00002722 )
+    print "\tpdf 4 = ",'%.16e' % pdf
+
+    pdf = ionization_dist.evaluatePDF( 20.01, 22.1 )
+    print "\tpdf 5 = ",'%.16e' % pdf
+
+    print "\nEvaluate CDF"
+
+    cdf = ionization_dist.evaluateCDF( 9.99e-6, 1.361e-5 )
+    print "\tcdf 1 = ",'%.16e' % cdf
+
+    cdf = ionization_dist.evaluateCDF( 1e-5, 0.2 )
+    print "\tcdf 2 = ",'%.16e' % cdf
+
+    cdf = ionization_dist.evaluateCDF( 1.1e-5, 0.2 )
+    print "\tcdf 3 = ",'%.16e' % cdf
+
+    cdf = ionization_dist.evaluateCDF( 20.0, 20.00002722 )
+    print "\tcdf 4 = ",'%.16e' % cdf
+
+    cdf = ionization_dist.evaluateCDF( 20.01, 22.1 )
+    print "\tcdf 5 = ",'%.16e' % cdf
+
+
+    random_numbers = [ 0.0, 0.1 ]
+    Prng.RandomNumberGenerator.setFakeStream(random_numbers)
+
+    incoming_energies = [1e-3, 1e-5]
+
+    i = 0
+    for incoming_energy in incoming_energies:
+        outgoing_energy, scattering_angle = ionization_dist.sample( incoming_energy )
+        print "\n\tincoming_energy =", incoming_energy,"\trandom_number =",random_numbers[i]
+        print "\noutgoing_energy = ",'%.16e' % outgoing_energy
+        print "scattering_angle = ",'%.16e' % scattering_angle
+        i = i+1
 
 ###
 ###  Adjoint Electron Collision Handler Unit Test Check

@@ -26,9 +26,9 @@ native_data = Native.ElectronPhotonRelaxationDataContainer( file_name )
 
 
 energy_grid = native_data.getBremsstrahlungEnergyGrid()
-linlinlin_brem_dist = Collision.createBremsstrahlungDistribution(native_data, "LinLinLin", True, False, 1e-7)
-linlinlog_brem_dist = Collision.createBremsstrahlungDistribution(native_data, "LinLinLog", True, True, 1e-7)
-logloglog_brem_dist = Collision.createBremsstrahlungDistribution(native_data, "LogLogLog", True, False, 1e-7)
+linlinlin_brem_dist = Collision.createLinLinLinUnitBaseCorrelatedBremsstrahlungDistribution(native_data, 1e-7)
+linlinlog_brem_dist = Collision.createLinLinLogUnitBaseCorrelatedBremsstrahlungDistribution(native_data, 1e-7)
+logloglog_brem_dist = Collision.createLogLogLogUnitBaseCorrelatedBremsstrahlungDistribution(native_data, 1e-7)
 
 energy = 0.0009
 

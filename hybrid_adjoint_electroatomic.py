@@ -33,9 +33,9 @@ adjoint_screen_rutherford_cs = adjoint_data.getAdjointScreenedRutherfordElasticC
 adjoint_screen_rutherford_index = adjoint_data.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex()
 mp_reduction = adjoint_data.getAdjointMomentPreservingCrossSectionReduction()
 
-mp_reaction = Collision.createLogLogLogExactMomentPreservingElasticReaction( adjoint_data, 0.9, 1e-15)
-hybrid_reaction = Collision.createLogLogLogExactHybridElasticReaction( adjoint_data, 0.9, 1e-15)
-cutoff_dist = Collision.createLogLogLogExactCutoffElasticDistribution( adjoint_data, 0.999999, 1e-15)
+mp_reaction = Collision.createLogLogLogCorrelatedMomentPreservingElasticReaction( adjoint_data, 0.9, 1e-15)
+hybrid_reaction = Collision.createLogLogLogCorrelatedHybridElasticReaction( adjoint_data, 0.9, 1e-15)
+cutoff_dist = Collision.createLogLogLogCorrelatedCutoffElasticDistribution( adjoint_data, 0.999999, 1e-15)
 
 ###
 ###  Hybrid Distribution/Reaction Unit Test Check

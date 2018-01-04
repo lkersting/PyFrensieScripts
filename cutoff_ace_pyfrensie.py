@@ -34,7 +34,7 @@ for j in range(0,len(table_names) ):
     cutoff_dist = Collision.createCutoffElasticDistribution( ace_data )
 
     ###
-    ###  Cutoff Distribution Pyfrensie Unit Test Check
+    ###  Cutoff Distribution PyFrensie Unit Test Check
     ###
     energies = [1e5, 1e-3, 4e-4]
     angles = [0.0, 0.9]
@@ -47,12 +47,12 @@ for j in range(0,len(table_names) ):
             print '\teval[',angle,']      = ','%.16e' % pdf
 
 
-    # print "\n\tEvaluate PDF"
-    # for energy in energies:
-    #     print "Energy = ",energy
-    #     for angle in angles:
-    #         pdf = cutoff_dist.evaluatePDF( energy, angle )
-    #         print '\tPDF[',angle,']      = ','%.16e' % pdf
+    print "\n\tEvaluate PDF"
+    for energy in energies:
+        print "Energy = ",energy
+        for angle in angles:
+            pdf = cutoff_dist.evaluatePDF( energy, angle )
+            print '\tPDF[',angle,']      = ','%.16e' % pdf
 
     print "\n\tEvaluate CDF"
     for energy in energies:

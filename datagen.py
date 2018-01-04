@@ -1,11 +1,11 @@
 #! /usr/bin/env python
 import PyFrensie.Data.Native as Native
-import PyFrensie.DataGen.ElectronPhoton as EP
+#import PyFrensie.DataGen.ElectronPhoton as EP
 import PyFrensie.Utility as Utility
 import PyFrensie.Utility.Prng as Prng
 import PyFrensie.MonteCarlo.Collision as Collision
 import PyTrilinos.Teuchos as Teuchos
-import numpy
+#import numpy
 import matplotlib.pyplot as plt
 
 Utility.initFrensiePrng()

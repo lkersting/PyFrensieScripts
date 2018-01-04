@@ -42,7 +42,7 @@ for z in elements:
     cutoff_cross_sections = native_data.getCutoffElasticCrossSection()
     screen_rutherford_cs = native_data.getScreenedRutherfordElasticCrossSection()
     screen_rutherford_index = native_data.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex()
-    moment_cross_sections = Collision.createLogLogLogExactMomentPreservingElasticReaction(native_data, 0.9, 1e-7)
+    moment_cross_sections = Collision.createLogLogLogCorrelatedMomentPreservingElasticReaction(native_data, 0.9, 1e-7)
 
 
 #    if z == 'Pb-Native':
@@ -53,11 +53,11 @@ for z in elements:
     for interp in interps:
         print "\n--- ",interp,"Tests ---"
 
-        cutoff_dist = Collision.createLogLogLogExactCutoffElasticDistribution(native_data, 0.9, 1e-7)
+        cutoff_dist = Collision.createLogLogLogCorrelatedCutoffElasticDistribution(native_data, 0.9, 1e-7)
         if interp == "LinLinLog":
-          cutoff_dist = Collision.createLinLinLogExactCutoffElasticDistribution(native_data, 0.9, 1e-15)
+          cutoff_dist = Collision.createLinLinLogCorrelatedCutoffElasticDistribution(native_data, 0.9, 1e-15)
         elif interp == "LinLinLin":
-          cutoff_dist = Collision.createLinLinLinExactCutoffElasticDistribution(native_data, 0.9, 1e-15)
+          cutoff_dist = Collision.createLinLinLinCorrelatedCutoffElasticDistribution(native_data, 0.9, 1e-15)
 
         ###
         ###  Moment Preserving Reaction Unit Test Check

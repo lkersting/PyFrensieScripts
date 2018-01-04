@@ -92,11 +92,11 @@ moment_cs_reduction = adjoint_data.getAdjointMomentPreservingCrossSectionReducti
 subshells = adjoint_data.getSubshells()
 shell = subshells[0]
 adjoint_ionization_cs = adjoint_data.getAdjointElectroionizationCrossSection(shell)
-adjoint_cutoff_dist = Collision.createLogLogLogExactCutoffElasticDistribution(adjoint_data, 0.9, 1e-7)
-adjoint_mp_reaction = Collision.createLogLogLogExactMomentPreservingElasticReaction(adjoint_data, 0.9, 1e-7)
-adjoint_hybrid_reaction = Collision.createLogLogLogExactHybridElasticReaction(adjoint_data, 0.9, 1e-7)
-adjoint_hybrid_dist = Collision.createLogLogLogExactHybridElasticDistribution(adjoint_data, 0.9, 1e-7)
-adjoint_cutoff_reaction = Collision.createLogLogLogExactCutoffElasticReaction(adjoint_data, 0.9, 1e-7)
+adjoint_cutoff_dist = Collision.createLogLogLogCorrelatedCutoffElasticDistribution(adjoint_data, 0.9, 1e-7)
+adjoint_mp_reaction = Collision.createLogLogLogCorrelatedMomentPreservingElasticReaction(adjoint_data, 0.9, 1e-7)
+adjoint_hybrid_reaction = Collision.createLogLogLogCorrelatedHybridElasticReaction(adjoint_data, 0.9, 1e-7)
+adjoint_hybrid_dist = Collision.createLogLogLogCorrelatedHybridElasticDistribution(adjoint_data, 0.9, 1e-7)
+adjoint_cutoff_reaction = Collision.createLogLogLogCorrelatedCutoffElasticReaction(adjoint_data, 0.9, 1e-7)
 
 energies = [1e-5, 1e-3, 20.0]
 #energies = [1.0, 10.0, 20.0]

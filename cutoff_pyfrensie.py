@@ -38,8 +38,8 @@ for interp in interpolations:
     print "\n\n\t-----",interp,"-----"
     for cutoff in cutoff_angle_cosines:
 
-        cutoff_dist = Collision.createCutoffElasticDistribution(native_data, cutoff, interp, True, 1e-14)
-        full_cutoff_dist = Collision.createCutoffElasticDistribution( native_data, 1.0, interp, True, 1e-14)
+        cutoff_dist = Collision.createLinLinLogCorrelatedCutoffElasticDistribution(native_data, cutoff, 1e-14)
+        full_cutoff_dist = Collision.createLinLinLogCorrelatedCutoffElasticDistribution( native_data, 1.0, 1e-14)
         print "\n\t--- Cutoff Angle Cosine = ",cutoff," ---"
         print "\n\tEvaluate"
         for energy in energies:
@@ -101,7 +101,7 @@ for energy in energies:
         if angles[i] <= 0.9:
             index_0 = i
 
-    pdf_at_cutoff = pdf[index_0] + (pdf[index_0+1] - pdf[index_0])*(0.9- angles[index_0] )/(angles[index_0+1] - angles[index_0] );
+    pdf_at_cutoff = pdf[index_0] + (pdf[index_0+1] - pdf[index_0])*(0.9- angles[index_0] )/(angles[index_0+1] - angles[index_0] )
 
     print "\n\tgetAngularGridAndPDF Test at energy ",energy
 

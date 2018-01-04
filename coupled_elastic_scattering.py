@@ -35,23 +35,26 @@ screen_rutherford_index = native_data.getScreenedRutherfordElasticCrossSectionTh
 ###  Coupled Distribution/Reaction Unit Test Check
 ###
 interps = ["LinLinLog", "LogLogLog", "LinLinLin"]
-interps = ["LinLinLin"]
 methods = ["Simplified Union","One D Union","Two D Union"]
+energies = [1.0e+5,6.625E+01,200.0]
+
+interps = ["LogLogLog"]
+methods = ["Simplified Union"]
 energies = [1.0e+5,6.625E+01,200.0]
 for interp in interps:
   print "\n-----", interp ,"-----\n"
   for method in methods:
-      coupled_dist = Collision.createLinLinLogExactCoupledElasticDistribution( native_data, method, 1e-15 )
+      coupled_dist = Collision.createLinLinLogCoupledElasticDistribution( native_data, method, 1e-15 )
       if interp == "LogLogLog":
-        coupled_dist = Collision.createLogLogLogExactCoupledElasticDistribution( native_data, method, 1e-15 )
+        coupled_dist = Collision.createLogLogLogCorrelatedCoupledElasticDistribution( native_data, method, 1e-15 )
       elif interp == "LinLinLin":
-        coupled_dist = Collision.createLinLinLinExactCoupledElasticDistribution( native_data, method, 1e-15 )
+        coupled_dist = Collision.createLinLinLinCorrelatedCoupledElasticDistribution( native_data, method, 1e-15 )
 
 
       print "\n----- ",method," -----\n"
 
       print "\t -- Evaluate --"
-      angles = [0.0, -0.01, 0.71, 0.999999, 1.0]
+      angles = [-0.01, 0.0, 0.71, 0.999999, 1.0]
       for energy in energies:
         print "Energy = ",energy
         for angle in angles:
@@ -59,7 +62,7 @@ for interp in interps:
           print '\teval[','%.6e' %angle,']\t= ','%.16e' % pdf
 
       print "\n\t-- Evaluate PDF --"
-      angles = [0.0, -0.01, 0.71, 0.999999, 1.0]
+      angles = [-0.01, 0.0, 0.71, 0.999999, 1.0]
       for energy in energies:
         print "Energy = ",energy
         for angle in angles:
@@ -68,7 +71,7 @@ for interp in interps:
 
 
       print "\n\t-- Evaluate CDF --"
-      angles = [0.0, -0.01, 0.71, 0.999995, 0.999999, 1.0]
+      angles = [-0.01, 0.0, 0.71, 0.999995, 0.999999, 1.0]
       for energy in energies:
         print "Energy = ",energy
         for angle in angles:
