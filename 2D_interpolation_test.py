@@ -39,7 +39,7 @@ def unit_base_pdf_lin( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha):
   if eta == 0.0:
     e_loss_0 = e_loss_0_min
     e_loss_1 = e_loss_1_min
-  elif eta == 1.0:
+  elif eta >= 1.0:
     e_loss_0 = e_loss_0_max
     e_loss_1 = e_loss_1_max
   else:
@@ -76,7 +76,7 @@ def unit_base_pdf_log( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha):
     if eta == 0.0:
         e_loss_0 = e_loss_0_min
         e_loss_1 = e_loss_1_min
-    elif eta == 1.0:
+    elif eta >= 1.0:
         e_loss_0 = e_loss_0_max
         e_loss_1 = e_loss_1_max
     else:
@@ -102,8 +102,8 @@ def unit_base_cdf_lin( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha):
   e_loss_1_L = (e_loss_1_max - e_loss_1_min)
 
   # Get E' min, max and length
-  e_loss_min = log_interp( E_alpha, e_loss_0_min, e_loss_1_min )
-  e_loss_max = log_interp( E_alpha, e_loss_0_max, e_loss_1_max )
+  e_loss_min = lin_interp( E_alpha, e_loss_0_min, e_loss_1_min )
+  e_loss_max = lin_interp( E_alpha, e_loss_0_max, e_loss_1_max )
   e_loss_L = (e_loss_max - e_loss_min)
 
   # Calculate eta for E'
@@ -113,7 +113,7 @@ def unit_base_cdf_lin( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha):
   if eta == 0.0:
     e_loss_0 = e_loss_0_min
     e_loss_1 = e_loss_1_min
-  elif eta == 1.0:
+  elif eta >= 1.0:
     e_loss_0 = e_loss_0_max
     e_loss_1 = e_loss_1_max
   else:
@@ -152,7 +152,7 @@ def unit_base_cdf_log( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha):
   if eta == 0.0:
     e_loss_0 = e_loss_0_min
     e_loss_1 = e_loss_1_min
-  elif eta == 1.0:
+  elif eta >= 1.0:
     e_loss_0 = e_loss_0_max
     e_loss_1 = e_loss_1_max
   else:
@@ -191,7 +191,7 @@ def unit_base2_pdf_lin( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha)
   if eta == 0.0:
     e_loss_0 = e_loss_0_min
     e_loss_1 = e_loss_1_min
-  elif eta == 1.0:
+  elif eta >= 1.0:
     e_loss_0 = e_loss_0_max
     e_loss_1 = e_loss_1_max
   else:
@@ -203,7 +203,7 @@ def unit_base2_pdf_lin( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha)
   pdf_1 = dist_1.evaluatePDF( e_loss_1 )
 
   # Calculate the pdf
-  return lin_interp( E_alpha, pdf_0*e_loss_0_L*e_loss_0_L, pdf_1*e_loss_1_L*e_loss_1_L )/(e_loss_L*e_loss_L)
+  return lin_interp( E_alpha, pdf_0*e_loss_0_L, pdf_1*e_loss_1_L )/e_loss_L
 
 def unit_base2_pdf_log( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha):
     # Get lower min, max and length
@@ -228,7 +228,7 @@ def unit_base2_pdf_log( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha)
     if eta == 0.0:
         e_loss_0 = e_loss_0_min
         e_loss_1 = e_loss_1_min
-    elif eta == 1.0:
+    elif eta >= 1.0:
         e_loss_0 = e_loss_0_max
         e_loss_1 = e_loss_1_max
     else:
@@ -254,8 +254,8 @@ def unit_base2_cdf_lin( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha)
   e_loss_1_L = (e_loss_1_max - e_loss_1_min)
 
   # Get E' min, max and length
-  e_loss_min = log_interp( E_alpha, e_loss_0_min, e_loss_1_min )
-  e_loss_max = log_interp( E_alpha, e_loss_0_max, e_loss_1_max )
+  e_loss_min = lin_interp( E_alpha, e_loss_0_min, e_loss_1_min )
+  e_loss_max = lin_interp( E_alpha, e_loss_0_max, e_loss_1_max )
   e_loss_L = (e_loss_max - e_loss_min)
 
   # Calculate eta for E'
@@ -265,7 +265,7 @@ def unit_base2_cdf_lin( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha)
   if eta == 0.0:
     e_loss_0 = e_loss_0_min
     e_loss_1 = e_loss_1_min
-  elif eta == 1.0:
+  elif eta >= 1.0:
     e_loss_0 = e_loss_0_max
     e_loss_1 = e_loss_1_max
   else:
@@ -304,7 +304,7 @@ def unit_base2_cdf_log( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha)
   if eta == 0.0:
     e_loss_0 = e_loss_0_min
     e_loss_1 = e_loss_1_min
-  elif eta == 1.0:
+  elif eta >= 1.0:
     e_loss_0 = e_loss_0_max
     e_loss_1 = e_loss_1_max
   else:
@@ -382,7 +382,7 @@ def correlated_unit_base_pdf_log( cdf, e_loss, dist_0, dist_1, e_losses_0, e_los
         denominator = e_loss*lin_interp( E_alpha, product_1, product_0 )
         return numerator/denominator
 
-def sample_unit_base_lin( cdf, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha):
+def sample_correlated_unit_base_lin( cdf, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha):
   if cdf > 1.0:
     cdf = 1.0 - 1e-15
 
@@ -416,7 +416,7 @@ def sample_unit_base_lin( cdf, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha):
 
   return sample
 
-def sample_unit_base_log( cdf, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha):
+def sample_correlated_unit_base_log( cdf, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha):
   if cdf > 1.0:
     cdf = 1.0 - 1e-15
 
@@ -520,6 +520,25 @@ def sample_direct_log( cdf, dist_0, dist_1, E_alpha):
 
   return sample
 
+def construct_processed_cdf_distribution( pdfs, cdfs, e_losses ):
+
+  # Process the e_losses
+  process_cdf_e_losses = numpy.zeros( shape=( len( e_losses ) ) )
+  for i in range(0, len(e_losses)):
+    process_cdf_e_losses[i] = numpy.log(e_losses[i])
+
+  # construct the distribution
+  process_cdf_dist = Distribution.TabularCDFDistribution_LogLin(process_cdf_e_losses, cdfs, True)
+
+  # Get the processed cdf dist cdf values
+  process_cdf_cdfs = numpy.zeros( shape=( len( cdfs ) ) )
+  process_cdf_pdfs = numpy.zeros( shape=( len( cdfs ) ) )
+  for i in range(0, len(process_cdf_cdfs)):
+    process_cdf_cdfs[i] = process_cdf_dist.evaluateCDF( process_cdf_e_losses[i] )
+    process_cdf_pdfs[i] = process_cdf_dist.evaluatePDF( process_cdf_e_losses[i] )
+
+  return process_cdf_e_losses, process_cdf_pdfs, process_cdf_cdfs, process_cdf_dist
+
 def recast_distributions( dist_0, dist_1, cdfs_0, cdfs_1 ):
 
   # Combine unique cdf values from dist_0 and dist_1
@@ -576,7 +595,7 @@ def sub_unit_base_pdf_lin( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alp
   if eta == 0.0:
     e_loss_0 = e_loss_0_min
     e_loss_1 = e_loss_1_min
-  elif eta == 1.0:
+  elif eta >= 1.0:
     e_loss_0 = e_loss_0_max
     e_loss_1 = e_loss_1_max
   else:
@@ -621,7 +640,7 @@ def sub_unit_base_pdf_log( e_loss, dist_0, dist_1, e_losses, e_losses_0, e_losse
   if eta == 0.0:
     e_loss_0 = e_loss_0_min
     e_loss_1 = e_loss_1_min
-  elif eta == 1.0:
+  elif eta >= 1.0:
     e_loss_0 = e_loss_0_max
     e_loss_1 = e_loss_1_max
   else:
@@ -647,8 +666,8 @@ def sub_unit_base_cdf_lin( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alp
   e_loss_1_L = (e_loss_1_max - e_loss_1_min)
 
   # Get E' min, max and length
-  e_loss_min = log_interp( E_alpha, e_loss_0_min, e_loss_1_min )
-  e_loss_max = log_interp( E_alpha, e_loss_0_max, e_loss_1_max )
+  e_loss_min = lin_interp( E_alpha, e_loss_0_min, e_loss_1_min )
+  e_loss_max = lin_interp( E_alpha, e_loss_0_max, e_loss_1_max )
   e_loss_L = (e_loss_max - e_loss_min)
 
   # Calculate eta for E'
@@ -658,7 +677,7 @@ def sub_unit_base_cdf_lin( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alp
   if eta == 0.0:
     e_loss_0 = e_loss_0_min
     e_loss_1 = e_loss_1_min
-  elif eta == 1.0:
+  elif eta >= 1.0:
     e_loss_0 = e_loss_0_max
     e_loss_1 = e_loss_1_max
   else:
@@ -697,7 +716,7 @@ def sub_unit_base_cdf_log( e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alp
   if eta == 0.0:
     e_loss_0 = e_loss_0_min
     e_loss_1 = e_loss_1_min
-  elif eta == 1.0:
+  elif eta >= 1.0:
     e_loss_0 = e_loss_0_max
     e_loss_1 = e_loss_1_max
   else:
@@ -725,20 +744,20 @@ xml_obj = source.getObject()
 cs_list = Teuchos.XMLParameterListReader().toParameterList( xml_obj )
 
 # -------------------------------------------------------------------------- ##
-#  Electroionization Data
+#  Brem Data
 # -------------------------------------------------------------------------- ##
 # Possible Elements ['H-Native', 'Al-Native', 'Pb-Native']
-elements = ['Pb-Native']
+elements = ['Al-Native']
 # Possible Interpolation Policies ["LogLogLog", "LinLinLin", "LinLinLog"]
 interps = ["LogLogLog"]
-# Possible Interpolation Schemes ["Unit-base", "Unit-base CDF", "Correlated Unit-base", "Corresponding Energies", "Cumulative Points"]
-schemes = ["Unit-base", "Correlated Unit-base", "Corresponding Energies", "Cumulative Points"]
+# Possible Interpolation Schemes ["Unit-base", "Processed CDF Unit-base", "Unit-base CDF", "Correlated Unit-base", "Corresponding Energies", "Cumulative Points"]
+schemes = ["Unit-base CDF", "Correlated Unit-base", "Corresponding Energies"]
 # Show Relative difference in schemes (True/False)
 show_difference = False
 # Possible energies [1e-2, 1e-1, 1.0, 15.7, 20.0]
-energies = [1e3]
+energies = [0.0173]
 # # Step length between plot points
-step = 0.0001
+step = 0.001
 length = int(1.0/step)
 
 plot_number = 1
@@ -772,22 +791,42 @@ for z in elements:
       e_losses_0 = native_data.getBremsstrahlungPhotonEnergy(energy_0)
       pdfs_0 = native_data.getBremsstrahlungPhotonPDF(energy_0)
       dist_0 = Distribution.TabularDistribution_LinLin( e_losses_0, pdfs_0 )
+      log_dist_0 = Distribution.TabularDistribution_LogLog( e_losses_0, pdfs_0 )
 
       # Get the lower cdf values
       cdfs_0 = numpy.zeros( shape=( len( pdfs_0 ) ) )
+      log_pdfs_0 = numpy.zeros( shape=( len( pdfs_0 ) ) )
+      log_cdfs_0 = numpy.zeros( shape=( len( pdfs_0 ) ) )
       for i in range(0,len(cdfs_0)):
         pdfs_0[i] = dist_0.evaluatePDF( e_losses_0[i] )
+        log_pdfs_0[i] = dist_0.evaluatePDF( e_losses_0[i] )
         cdfs_0[i] = dist_0.evaluateCDF( e_losses_0[i] )
+        log_cdfs_0[i] = dist_0.evaluateCDF( e_losses_0[i] )
+
+      # Process lower energy bin data
+      process_cdf_e_losses_0, process_cdf_pdfs_0, process_cdf_cdfs_0, process_cdf_dist_0 = construct_processed_cdf_distribution(pdfs_0, cdfs_0, e_losses_0)
+
 
       e_losses_1 = native_data.getBremsstrahlungPhotonEnergy(energy_1)
       pdfs_1 = native_data.getBremsstrahlungPhotonPDF(energy_1)
       dist_1 = Distribution.TabularDistribution_LinLin( e_losses_1, pdfs_1 )
+      log_dist_1 = Distribution.TabularDistribution_LogLog( e_losses_1, pdfs_1 )
 
       # Get the upper cdf values
       cdfs_1 = numpy.zeros( shape=( len( pdfs_1 ) ) )
-      for i in range(0,len(cdfs_1)):
+      log_pdfs_1 = numpy.zeros( shape=( len( pdfs_1 ) ) )
+      log_cdfs_1 = numpy.zeros( shape=( len( pdfs_1 ) ) )
+      for i in range(0, len(cdfs_1)):
         pdfs_1[i] = dist_1.evaluatePDF( e_losses_1[i] )
+        log_pdfs_1[i] = dist_1.evaluatePDF( e_losses_1[i] )
         cdfs_1[i] = dist_1.evaluateCDF( e_losses_1[i] )
+        log_cdfs_1[i] = dist_1.evaluateCDF( e_losses_1[i] )
+
+      # Process upper energy bin data
+      process_cdf_e_losses_1, process_cdf_pdfs_1, process_cdf_cdfs_1, process_cdf_dist_1 = construct_processed_cdf_distribution(pdfs_1, cdfs_1, e_losses_1)
+
+      process_percent_values_0 = (e_losses_0 - e_losses_0[0])/(energy_0 - e_losses_0[0])
+      process_percent_values_1 = (e_losses_1 - e_losses_1[0])/(energy_1 - e_losses_1[0])
 
       cdfs_0, pdfs_0, pdfs_1, e_losses_0, e_losses_1 = recast_distributions( dist_0, dist_1, cdfs_0, cdfs_1 )
       cdfs_1 = cdfs_0
@@ -810,10 +849,21 @@ for z in elements:
         percent_values_0 = (e_losses_0 - e_losses_0[0])/(energy_0 - e_losses_0[0])
         percent_values_1 = (e_losses_1 - e_losses_1[0])/(energy_1 - e_losses_1[0])
         label0 = str(energy_0) +' MeV'
+        log_label0 = "log "+label0
+        process_cdf_label0 = "processed cdf "+label0
+
         label1 = str(energy_1) +' MeV'
+        log_label1 = "log "+label1
+        process_cdf_label1 = "processed cdf "+label1
+
         plt.plot( percent_values_0, pdfs_0, label=label0)
         plt.plot( percent_values_1, pdfs_1, label=label1)
 
+        #plt.plot( process_percent_values_0, log_pdfs_0, label=log_label0)
+        #plt.plot( process_percent_values_0, process_cdf_pdfs_0, label=process_cdf_label0)
+
+        #plt.plot( process_percent_values_1, log_pdfs_1, label=log_label1)
+        #plt.plot( process_percent_values_1, process_cdf_pdfs_1, label=process_cdf_label1)
 
         plot_number = plot_number + 1
 
@@ -828,7 +878,16 @@ for z in elements:
         plt.title( title )
 
         plt.plot( percent_values_0, cdfs_0, label=label0)
+        #plt.plot( process_percent_values_0, log_cdfs_0, label=log_label0)
+        #plt.plot( process_percent_values_0, process_cdf_cdfs_0, label=process_cdf_label0)
+
         plt.plot( percent_values_1, cdfs_1, label=label1)
+        # plt.plot( process_percent_values_1, log_cdfs_1, label=log_label1)
+        # plt.plot( process_percent_values_1, process_cdf_cdfs_1, label=process_cdf_label1)
+        plt.xscale('log')
+        plt.yscale('log')
+        # plt.xlim(x_min,1.0)
+        plt.legend( loc=3)
 
         # Plot all schemes on one graph
         pdfs = numpy.zeros(shape=( len(schemes), length ) )
@@ -859,6 +918,9 @@ for z in elements:
                   cdfs[n,i] = 0.0
                 else:
                   cdfs[n,i] = unit_base_cdf_log( e_losses[n,i], dist_0, dist_1, e_losses_0, e_losses_1, log_E_alpha)
+                  cdfs[n,i] = (i+1.0)/(length + 1.0)
+                  if e_losses[n,i] > 0.1*energy:
+                    cdfs[n,i] = 0.5
 
             elif interp == "LinLinLin":
               e_loss_min = lin_interp( lin_E_alpha, e_losses_0[0],e_losses_1[0] )
@@ -877,6 +939,7 @@ for z in elements:
             # Normalize to 1
             pdfs[n] = pdfs[n]/cdfs[n,length-1]
             cdfs[n] = cdfs[n]/cdfs[n,length-1]
+            print cdfs[n]
 
           if schemes[n] == "Unit-base CDF":
             if interp == "LogLogLog":
@@ -911,6 +974,43 @@ for z in elements:
             pdfs[n] = pdfs[n]/cdfs[n,length-1]
             cdfs[n] = cdfs[n]/cdfs[n,length-1]
 
+          if schemes[n] == "Processed CDF Unit-base":
+            if interp == "LogLogLog":
+              e_loss_min = log_interp( log_E_alpha, e_losses_0[0], e_losses_1[0] )
+              e_losses[n] = numpy.logspace(numpy.log10(e_loss_min), numpy.log10(energy), num=length)
+
+              for i in range(0, length):
+                # Calculate the processed e loss
+                process_e_loss = numpy.log(e_losses[n,i])
+
+                # Calculate the pdf
+                pdfs[n,i] = unit_base2_pdf_lin( process_e_loss, process_cdf_dist_0, process_cdf_dist_1, process_cdf_e_losses_0, process_cdf_e_losses_1, log_E_alpha)
+
+                # Calculate the CDF
+                if i == 0:
+                  cdfs[n,i] = 0.0
+                else:
+                  cdfs[n,i] = unit_base2_cdf_lin( process_e_loss, process_cdf_dist_0, process_cdf_dist_1, process_cdf_e_losses_0, process_cdf_e_losses_1, log_E_alpha)
+              print cdfs[n]
+            elif interp == "LinLinLin":
+              print "The processed unit-base is naturally in logarithmic space!"
+              # e_loss_min = lin_interp( lin_E_alpha, e_losses_0[0],e_losses_1[0] )
+              # e_losses[n] = numpy.logspace(numpy.log10(e_loss_min), numpy.log10(energy), num=length)
+
+              # for i in range(0, length):
+              #   # Calculate the pdf
+              #   pdfs[n,i] = unit_base2_pdf_lin( e_losses[n,i], dist_0, dist_1, e_losses_0, e_losses_1, lin_E_alpha)
+
+              #   # Calculate the CDF
+              #   if i == 0:
+              #     cdfs[n,i] = 0.0
+              #   else:
+              #     cdfs[n,i] = unit_base2_cdf_lin( e_losses[n,i], dist_0, dist_1, e_losses_0, e_losses_1, lin_E_alpha)
+
+            # Normalize to 1
+            pdfs[n] = pdfs[n]/cdfs[n,length-1]
+            cdfs[n] = cdfs[n]/cdfs[n,length-1]
+
           elif schemes[n] == "Correlated Unit-base":
             if n > 0:
               cdfs[n] = cdfs[n-1]
@@ -919,16 +1019,16 @@ for z in elements:
             combined_cdfs[n] = cdfs_0
             if interp == "LogLogLog":
               for i in range(0, length):
-                e_losses[n,i] = sample_unit_base_log( cdfs[n,i], dist_0, dist_1, e_losses_0, e_losses_1, log_E_alpha )
+                e_losses[n,i] = sample_correlated_unit_base_log( cdfs[n,i], dist_0, dist_1, e_losses_0, e_losses_1, log_E_alpha )
                 pdfs[n,i] = correlated_unit_base_pdf_log( cdfs[n,i], e_losses[n,i], dist_0, dist_1, e_losses_0, e_losses_1, log_E_alpha)
               for i in range(0, combined_length):
-                combined_e_losses[n,i] = sample_unit_base_log( combined_cdfs[n,i], dist_0, dist_1, e_losses_0, e_losses_1, log_E_alpha )
+                combined_e_losses[n,i] = sample_correlated_unit_base_log( combined_cdfs[n,i], dist_0, dist_1, e_losses_0, e_losses_1, log_E_alpha )
             elif interp == "LinLinLin":
               for i in range(0, length):
-                e_losses[n,i] = sample_unit_base_lin( cdfs[n,i], dist_0, dist_1, e_losses_0, e_losses_1, lin_E_alpha )
+                e_losses[n,i] = sample_correlated_unit_base_lin( cdfs[n,i], dist_0, dist_1, e_losses_0, e_losses_1, lin_E_alpha )
                 pdfs[n,i] = correlated_unit_base_pdf_lin( cdfs[n,i], dist_0, dist_1, e_losses_0, e_losses_1, lin_E_alpha )
               for i in range(0, combined_length):
-                combined_e_losses[n,i] = sample_unit_base_lin( combined_cdfs[n,i], dist_0, dist_1, e_losses_0, e_losses_1, lin_E_alpha )
+                combined_e_losses[n,i] = sample_correlated_unit_base_lin( combined_cdfs[n,i], dist_0, dist_1, e_losses_0, e_losses_1, lin_E_alpha )
 
           elif schemes[n] == "Corresponding Energies":
             if n > 0:
@@ -1028,7 +1128,6 @@ for z in elements:
           cdf_diff = numpy.zeros(shape=length)
           pdf_diff = numpy.zeros(shape=length)
           for i in range(0,length):
-            print cdfs[i_0,i] - cdfs[i_1,i], abs( cdfs[i_0,i] - cdfs[i_1,i] )
             cdf_diff[i] = abs( cdfs[i_0,i] - cdfs[i_1,i] )
             pdf_diff[i] = abs( pdfs[i_0,i] - pdfs[i_1,i] )
           print cdf_diff
@@ -1088,6 +1187,13 @@ for z in elements:
               data.append(n)
             elif combined_cdfs[n,combined_length-1] > 0.0:
               combined_data.append(n)
+
+          if not index_found and len(data) > 1:
+            index = data.pop(0)
+            index_found = True
+          elif not index_found and len(combined_data) > 1:
+            index = combined_data.pop(0)
+            index_found = True
 
           # Plot Differences
           for n in data:
