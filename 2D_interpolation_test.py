@@ -329,30 +329,34 @@ def correlated_unit_base_pdf_lin( cdf, dist_0, dist_1, e_losses_0, e_losses_1, E
   e_loss_0_max = e_losses_0[len(e_losses_0)-1]
   e_loss_0_L = e_loss_0_max - e_loss_0_min
   e_loss_0 = dist_0.sampleWithRandomNumber( cdf )
-  pdf_0 = dist_0.evaluatePDF( e_loss_0 )*e_loss_0_L
+  pdf_0 = dist_0.evaluatePDF( e_loss_0 )
+  product_0 = pdf_0*e_loss_0_L
 
   # Get upper min, max, length, sample and pdf
   e_loss_1_min = e_losses_1[0]
   e_loss_1_max = e_losses_1[len(e_losses_1)-1]
   e_loss_1_L = e_loss_1_max - e_loss_1_min
   e_loss_1 = dist_1.sampleWithRandomNumber( cdf )
-  pdf_1 = dist_1.evaluatePDF( e_loss_1 )*e_loss_1_L
+  pdf_1 = dist_1.evaluatePDF( e_loss_1 )
+  product_1 = pdf_1*e_loss_1_L
 
   # Get E' min, max and length
   e_loss_min = lin_interp( E_alpha, e_loss_0_min, e_loss_1_min )
   e_loss_max = lin_interp( E_alpha, e_loss_0_max, e_loss_1_max )
   e_loss_L = e_loss_max - e_loss_min
 
-  numerator = pdf_0*pdf_1
+  numerator = product_0*product_1
   if numerator == 0.0:
     return 0.0
   else:
-    denominator = lin_interp( E_alpha, pdf_1, pdf_0)*L
+    denominator = lin_interp( E_alpha, product_1, product_0)*e_loss_L
     return numerator/denominator
 
 def correlated_unit_base_pdf_log( cdf, e_loss, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha):
     if cdf > 1.0:
         cdf = 1.0 - 1e-15
+    if cdf == 0.0:
+      return correlated_unit_base_pdf_lin( cdf, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha)
 
     # Get lower min, max, length, sample and pdf
     e_loss_0_min = e_losses_0[0]
@@ -360,7 +364,7 @@ def correlated_unit_base_pdf_log( cdf, e_loss, dist_0, dist_1, e_losses_0, e_los
     e_loss_0_L = numpy.log(e_loss_0_max/e_loss_0_min)
     e_loss_0 = dist_0.sampleWithRandomNumber( cdf )
     pdf_0 = dist_0.evaluatePDF( e_loss_0 )
-    product_0 = e_loss_0*pdf_0
+    product_0 = (e_loss_0 - e_loss_0_min)*pdf_0
 
     # Get upper min, max, length, sample and pdf
     e_loss_1_min = e_losses_1[0]
@@ -368,7 +372,7 @@ def correlated_unit_base_pdf_log( cdf, e_loss, dist_0, dist_1, e_losses_0, e_los
     e_loss_1_L = numpy.log(e_loss_1_max/e_loss_1_min)
     e_loss_1 = dist_1.sampleWithRandomNumber( cdf )
     pdf_1 = dist_1.evaluatePDF( e_loss_1 )
-    product_1 = e_loss_1*pdf_1
+    product_1 = (e_loss_1 - e_loss_1_min)*pdf_1
 
     # Get E' min, max and length
     e_loss_min = log_interp( E_alpha, e_loss_0_min, e_loss_1_min )
@@ -376,11 +380,9 @@ def correlated_unit_base_pdf_log( cdf, e_loss, dist_0, dist_1, e_losses_0, e_los
     e_loss_L = numpy.log(e_loss_max/e_loss_min)
 
     numerator = product_0*product_1
-    if numerator == 0.0:
-        return 0.0
-    else:
-        denominator = e_loss*lin_interp( E_alpha, product_1, product_0 )
-        return numerator/denominator
+    denominator = (e_loss-e_loss_min)*lin_interp( E_alpha, product_1, product_0 )
+    print pdf_0, pdf_1, numerator/denominator
+    return numerator/denominator
 
 def sample_correlated_unit_base_lin( cdf, dist_0, dist_1, e_losses_0, e_losses_1, E_alpha):
   if cdf > 1.0:
@@ -757,7 +759,7 @@ show_difference = False
 # Possible energies [1e-2, 1e-1, 1.0, 15.7, 20.0]
 energies = [0.0173]
 # # Step length between plot points
-step = 0.001
+step = 0.01
 length = int(1.0/step)
 
 plot_number = 1
