@@ -23,13 +23,6 @@ data_list = cs_list.get( 'H-Native' )
 ### -------------------------------------------------------------------------- ##
 native_file_name = datadir + data_list.get( 'electroatomic_file_path' )
 native_data = Native.ElectronPhotonRelaxationDataContainer( native_file_name )
-energy_grid = native_data.getElectronEnergyGrid()
-
-tot_elastic_cs = native_data.getTotalElasticCrossSection()
-cutoff_cs = native_data.getCutoffElasticCrossSection()
-screen_rutherford_cs = native_data.getScreenedRutherfordElasticCrossSection()
-screen_rutherford_index = native_data.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex()
-
 
 ###
 ###  Brem Distribution/Reaction Unit Test Check
