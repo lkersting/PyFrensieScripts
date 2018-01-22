@@ -22,21 +22,23 @@ cs_list = Teuchos.XMLParameterListReader().toParameterList(xml_obj)
 # Possible Elements ['H-Native', 'Al-Native', 'Pb-Native']
 elements = ['Al-Native']
 # Possible energies .005 .0093 .01 .011 .0134 .015 .0173 .02 .0252 .03 .04 .0415 .05 .06 .0621 .0818 and .102 MeV
-energies = [.0173]
+energies = [.015]
 # Possible Interpolation Policies ["LogLogLog", "LinLinLin", "LinLinLog"]
 interpolations = ["LogLogLog"]
 # Possible Reactions ["Elastic", "Bremsstrahlung", "Ionization"]
 reactions = ["Ionization"]
 # Possible Interpolation Schemes ["Unit-base", "Unit-base Correlated", "Correlated"]
-schemes = ["Unit-base", "Unit-base Correlated", "Correlated"]
+scheme_list = ["Unit-base", "Unit-base Correlated", "Correlated"]
 # Possible comparisons ["PDF", "CDF", "Sample"]
-comparisons = ["PDF"]
-# Show Relative difference in schemes (True/False)
+comparisons = ["CDF", "Sample"]
+# Show difference in schemes (True/False)
 show_difference = True
+# Show relative difference (if false the absolute difference will be shown )
+show_rel_diff = False
 # Just show first and last subshells
 show_first_and_last_shell_only = True
 # Step length between plot points
-step = 0.001
+step = 0.01
 length = int(1.0/step)
 # Eval Tolerance
 tol = 1e-10
@@ -78,7 +80,7 @@ for z in elements:
     for interpolation in interpolations:
 
       for reaction in reactions:
-
+        schemes = list(scheme_list)
         if reaction == "Elastic":
 
           # Get energy grid
@@ -209,33 +211,26 @@ for z in elements:
             plt.yscale('log')
             plt.legend(loc=2)
 
-            # Plot differences
             if len(schemes) > 1 and show_difference:
               # Plot differences in pdf
               plt.subplot2grid((2, 1), (1, 0), colspan=5)
-              plt.ylabel('PDF Relative Difference')
+              if show_rel_diff:
+                plt.ylabel('PDF Relative Difference')
+              else:
+                plt.ylabel('PDF Absolute Difference')
               plt.xlabel('Unit-base Angular Deflection')
 
-              # Plot Differences
-              rel_diff = numpy.zeros(shape=length)
-              for n in range(1, len(schemes)):
-                diff_label = schemes[0] + ' vs ' + schemes[n]
-
-                # Calculate difference between pdfs
-                for i in range(0, length):
-                  rel_diff[i] = abs(pdfs[0, i] - pdfs[n, i])/pdfs[0, i]
-
-                plt.plot(percent_values, rel_diff, dashes=dashes[n], label=diff_label)
-
-              if len(schemes) > 2:
-                for n in range(2, len(schemes)):
-                  diff_label = schemes[1] + ' vs ' + schemes[n]
+              # Plot differences
+              for m in range(0, len(schemes)-1):
+                rel_diff = numpy.zeros(shape=length)
+                for n in range(m+1, len(schemes)):
+                  diff_label = schemes[m] + ' vs ' + schemes[n]
 
                   # Calculate difference between pdfs
-                  rel_diff[0] = 0.0
-                  rel_diff[length -1] = 0.0
-                  for i in range(1, length-1):
-                    rel_diff[i] = abs(pdfs[1, i] - pdfs[n, i])/pdfs[1, i]
+                  for i in range(0, length):
+                    rel_diff[i] = abs(pdfs[m, i] - pdfs[n, i])
+                    if show_rel_diff:
+                      rel_diff[i] = rel_diff[i]/pdfs[m, i]
 
                   plt.plot(percent_values, rel_diff, dashes=dashes[n], label=diff_label)
 
@@ -280,33 +275,27 @@ for z in elements:
             if len(schemes) > 1 and show_difference:
               # Plot differences in cdf
               plt.subplot2grid((2, 1), (1, 0), colspan=5)
-              plt.ylabel('CDF Relative Difference')
+              if show_rel_diff:
+                plt.ylabel('CDF Relative Difference')
+              else:
+                plt.ylabel('CDF Absolute Difference')
               plt.xlabel('Unit-base Angular Deflection')
 
-              # Plot Differences
-              rel_diff = numpy.zeros(shape=length)
-              for n in range(1, len(schemes)):
-                diff_label = schemes[0] + ' vs ' + schemes[n]
+              # Plot differences
+              for m in range(0, len(schemes)-1):
+                rel_diff = numpy.zeros(shape=length)
+                for n in range(m+1, len(schemes)):
+                  diff_label = schemes[m] + ' vs ' + schemes[n]
 
                 # Calculate difference between cdfs
                 rel_diff[0] = 0.0
                 rel_diff[length -1] = 0.0
                 for i in range(1, length-1):
-                  rel_diff[i] = abs(cdfs[0, i] - cdfs[n, i])/cdfs[0, i]
+                  rel_diff[i] = abs(cdfs[m, i] - cdfs[n, i])
+                  if show_rel_diff:
+                    rel_diff[i] = rel_diff[i]/cdfs[m, i]
 
                 plt.plot(percent_values, rel_diff, dashes=dashes[n], label=diff_label)
-
-              if len(schemes) > 2:
-                for n in range(2, len(schemes)):
-                  diff_label = schemes[1] + ' vs ' + schemes[n]
-
-                  # Calculate difference between cdfs
-                  rel_diff[0] = 0.0
-                  rel_diff[length -1] = 0.0
-                  for i in range(1, length-1):
-                    rel_diff[i] = abs(cdfs[1, i] - cdfs[n, i])/cdfs[1, i]
-
-                  plt.plot(percent_values, rel_diff, dashes=dashes[n-2], label=diff_label)
 
               plt.xscale('log')
               plt.yscale('log')
@@ -326,12 +315,14 @@ for z in elements:
             Prng.RandomNumberGenerator.setFakeStream(random_numbers)
             for i in range(0, len(random_numbers)):
               e_out, samples_0[i] = dist.sample(energy_0)
+            zero_cdf_0 = dist.evaluateCDF(energy_0, 0.0)
 
             # Get lower energy bin data
             samples_1 = numpy.zeros(shape=len(random_numbers))
             Prng.RandomNumberGenerator.setFakeStream(random_numbers)
             for i in range(0, len(random_numbers)):
               e_out, samples_1[i] = dist.sample(energy_1)
+            zero_cdf_1 = dist.evaluateCDF(energy_1, 0.0)
 
             percent_samples = numpy.zeros(shape=(len(schemes), length))
             for n in range(0, len(schemes)):
@@ -364,7 +355,14 @@ for z in elements:
               # Plot differences in sampled values
               plt.subplot2grid((2, 1), (1, 0), colspan=5)
               plt.xlabel('CDF')
-              plt.ylabel('Sampled Relative Difference')
+              if show_rel_diff:
+                plt.ylabel('Sampled Relative Difference')
+              else:
+                plt.ylabel('Sampled Absolute Difference')
+
+
+              plt.axvline(zero_cdf_0)
+              plt.axvline(zero_cdf_1)
 
               # Plot Differences
               rel_diff = numpy.zeros(shape=length)
@@ -375,11 +373,12 @@ for z in elements:
                   # Calculate difference between sampled values
                   rel_diff[0] = 0.0
                   for i in range(0, length-1):
-                    if samples[m, i] == 0.0:
-                      rel_diff[i] = 0.0
-                    else:
-                      rel_diff[i] = abs((samples[m, i] - samples[n, i])/samples[m, i])
-
+                    rel_diff[i] = abs(samples[m, i] - samples[n, i])
+                    if show_rel_diff:
+                      if samples[m, i] == 0.0:
+                        rel_diff[i] = 0.0
+                      else:
+                        rel_diff[i] = abs(rel_diff[i]/samples[m, i])
                   plt.plot(random_numbers, rel_diff, dashes=dashes[n], label=diff_label)
 
               plt.xscale('log')
@@ -393,8 +392,9 @@ for z in elements:
           e_losses = numpy.logspace(numpy.log10(1e-7), numpy.log10(energy-1e-8), num=length)
 
           # Choose the random numbers at which to sample the distribution
-          lower_number = numpy.logspace(numpy.log10(1e-10), numpy.log10(1e-4), num=length/10+1)
-          upper_numbers = numpy.logspace(numpy.log10(1e-4), numpy.log10(1.0-1e-10), num=length*9/10)
+          break_number = 1e-4
+          lower_number = numpy.logspace(numpy.log10(1e-10), numpy.log10(break_number), num=length/10+1)
+          upper_numbers = numpy.logspace(numpy.log10(break_number), numpy.log10(1.0-1e-10), num=length*9/10)
           random_numbers = numpy.unique(numpy.concatenate((lower_number, upper_numbers), axis=0))
           angle_random_number = numpy.zeros((len(random_numbers)*2))
           angle_random_number[0::2] = random_numbers
@@ -647,6 +647,7 @@ for z in elements:
             plt.ylabel('Unit-base Energy Loss')
             plt.xlabel('CDF')
             plt.title(title)
+            plt.xlim(0.1, 1.0)
 
             plt.plot(random_numbers, percent_samples_0, label=label0)
             plt.plot(random_numbers, percent_samples_1, label=label1)
@@ -663,7 +664,10 @@ for z in elements:
               # Plot differences in sampled values
               plt.subplot2grid((2, 1), (1, 0), colspan=5)
               plt.xlabel('CDF')
-              plt.ylabel('Sampled Relative Difference')
+              if show_rel_diff:
+                plt.ylabel('Sampled Relative Difference')
+              else:
+                plt.ylabel('Sampled Absolute Difference')
 
               # Plot Differences
               rel_diff = numpy.zeros(shape=length)
@@ -674,24 +678,27 @@ for z in elements:
                   # Calculate difference between sampled values
                   rel_diff[0] = 0.0
                   for i in range(0, length):
-                    rel_diff[i] = abs((samples[m, i] - samples[n, i])/samples[m, i])
+                    rel_diff[i] = abs(samples[m, i] - samples[n, i])
+                    if show_rel_diff:
+                      rel_diff[i] = abs(rel_diff[i]/samples[m, i])
 
                   plt.plot(random_numbers, rel_diff, dashes=dashes[n], label=diff_label)
 
               plt.xscale('log')
               plt.yscale('log')
               plt.legend(loc=2)
-              # plt.autoscale()
+              plt.xlim(0.1, 1.0)
 
         if reaction == "Ionization":
           if show_first_and_last_shell_only:
-            shells = [subshells[0], subshells[num_shells-1]]
+            shells = [7]
           else:
             shells = subshells
 
           # Choose the random numbers at which to sample the distribution
-          lower_number = numpy.logspace(numpy.log10(1e-10), numpy.log10(1e-4), num=length/10+1)
-          upper_numbers = numpy.logspace(numpy.log10(1e-4), numpy.log10(1.0-1e-10), num=length*9/10)
+          break_number = 2e-6
+          lower_number = numpy.logspace(numpy.log10(1e-6), numpy.log10(break_number), num=length/10+1)
+          upper_numbers = numpy.logspace(numpy.log10(break_number), numpy.log10(1.0-1e-10), num=length*9/10)
           random_numbers = numpy.unique(numpy.concatenate((lower_number, upper_numbers), axis=0))
 
           schemes_original = list(schemes)
@@ -732,10 +739,8 @@ for z in elements:
               print "No reaction is possible!"
 
             e_losses = numpy.logspace(numpy.log10(min_energy), numpy.log10(max_energy), num=length)
-            if e_losses[1] < e_losses_0[1]:
-              e_losses_0 = numpy.insert(e_losses_0, 1, [e_losses[1]])
-            if e_losses[1] < e_losses_1[1]:
-              e_losses_1 = numpy.insert(e_losses_1, 1, [e_losses[1]])
+            e_losses_0 = numpy.logspace(numpy.log10(e_losses_0[0]), numpy.log10(e_losses_0[len(e_losses_0)-1]), num=length)
+            e_losses_1 = numpy.logspace(numpy.log10(e_losses_1[0]), numpy.log10(e_losses_1[len(e_losses_1)-1]), num=length)
 
             pdfs = numpy.zeros(shape=(len(schemes), length))
             cdfs = numpy.zeros(shape=(len(schemes), length))
@@ -939,6 +944,8 @@ for z in elements:
               Prng.RandomNumberGenerator.setFakeStream(random_numbers)
               for i in range(0, len(random_numbers)):
                 samples_0[i], angle = dist.sample(energy_0)
+              print samples_0
+              print e_losses_0[0], e_losses_0[len(e_losses_0)-1]
 
               # Get lower energy bin data
               samples_1 = numpy.zeros(shape=len(random_numbers))
@@ -970,7 +977,7 @@ for z in elements:
                 plt.subplot2grid((2, 1), (0, 0), colspan=5)
               else:
                 plt.subplot2grid((1, 1), (0, 0), colspan=5)
-              plt.ylabel('Unit-base Angular Deflection')
+              plt.ylabel('Unit-base Energy Loss')
               plt.xlabel('CDF')
               plt.title(title)
 
