@@ -1,10 +1,9 @@
 #! /usr/bin/env python
+import PyFrensie.Data as Data
 import PyFrensie.Data.Native as Native
 import PyFrensie.Utility as Utility
 import PyFrensie.Utility.Prng as Prng
-import PyFrensie.Utility.Interpolation as Interpolation
-import PyFrensie.MonteCarlo.Collision as Collision
-import PyTrilinos.Teuchos as Teuchos
+import PyFrensie.MonteCarlo.Electron as Electron
 import numpy
 import matplotlib.pyplot as plt
 
@@ -12,16 +11,17 @@ Utility.initFrensiePrng()
 
 #datadir = '/home/software/mcnpdata/'
 datadir = '/home/lkersting/frensie/src/packages/test_files/'
+name = 'native/test_epr_1_native.xml'
 
-source = Teuchos.FileInputSource( datadir + '/cross_sections.xml' )
-xml_obj = source.getObject()
-cs_list = Teuchos.XMLParameterListReader().toParameterList( xml_obj )
-data_list = cs_list.get( 'H-Native' )
+# database = datadir + '/cross_sections.xml'
+# database = Data.ScatteringCenterPropertiesDatabase(database)
+# h_properties = database.getAtomProperties( Utility.ZAID(1001) )
+# data_list = cs_list.get( 'H-Native' )
 
 ### -------------------------------------------------------------------------- ##
 ###  Forward Elastic Unit Test Check
 ### -------------------------------------------------------------------------- ##
-native_file_name = datadir + data_list.get( 'electroatomic_file_path' )
+native_file_name = datadir + name
 native_data = Native.ElectronPhotonRelaxationDataContainer( native_file_name )
 energy_grid = native_data.getElectronEnergyGrid()
 
@@ -39,16 +39,16 @@ methods = ["Simplified Union","One D Union","Two D Union"]
 energies = [1.0e+5,6.625E+01,200.0]
 
 interps = ["LogLogLog"]
-methods = ["Simplified Union"]
+methods = [Electron.SIMPLIFIED_UNION]
 energies = [1.0e+5,6.625E+01,200.0]
 for interp in interps:
   print "\n-----", interp ,"-----\n"
   for method in methods:
-      coupled_dist = Collision.createLinLinLogCoupledElasticDistribution( native_data, method, 1e-15 )
+      coupled_dist = Electron.createCoupledElasticDistribution_LinLogCorrelated( native_data, method, 1e-15 )
       if interp == "LogLogLog":
-        coupled_dist = Collision.createLogLogLogCorrelatedCoupledElasticDistribution( native_data, method, 1e-15 )
+        coupled_dist = Electron.createCoupledElasticDistribution_LogLogCorrelated( native_data, method, 1e-15 )
       elif interp == "LinLinLin":
-        coupled_dist = Collision.createLinLinLinCorrelatedCoupledElasticDistribution( native_data, method, 1e-15 )
+        coupled_dist = Electron.createCoupledElasticDistribution_LinLinCorrelated( native_data, method, 1e-15 )
 
 
       print "\n----- ",method," -----\n"

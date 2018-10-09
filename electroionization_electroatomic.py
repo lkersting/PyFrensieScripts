@@ -2,7 +2,6 @@
 import PyFrensie.Data.Native as Native
 import PyFrensie.Utility as Utility
 import PyFrensie.Utility.Prng as Prng
-import PyFrensie.Utility.Interpolation as Interpolation
 import PyFrensie.MonteCarlo.Collision as Collision
 import PyTrilinos.Teuchos as Teuchos
 import numpy

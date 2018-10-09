@@ -23,7 +23,7 @@ cs_list = Teuchos.XMLParameterListReader().toParameterList(xml_obj)
 # Possible Elements ['H-Native', 'Al-Native', 'Pb-Native']
 elements = ['Al-Native']
 # Possible energies .005 .0093 .01 .011 .0134 .015 .0173 .02 .0252 .03 .04 .0415 .05 .06 .0621 .0818 and .102 MeV
-energies = [.015]
+energies = [.0015848]
 # Possible Interpolation Policies ["LogLogLog", "LinLinLin", "LinLinLog"]
 interpolations = ["LogLogLog"]
 # Possible Interpolation Schemes ["Unit-base", "Unit-base Correlated", "Correlated"]
@@ -115,6 +115,7 @@ for z in elements:
         e_losses_1 = native_data.getElectroionizationRecoilEnergy(shell, energy_1)
         pdfs_1 = native_data.getElectroionizationRecoilPDF(shell, energy_1)
         dist_1 = Distribution.TabularDistribution_LinLin(e_losses_1, pdfs_1)
+        print e_losses_0[0], e_losses_1[0]
 
         # Choose the e_losses at which to evaluate the distribution
         max_energy = (energy - binding_energy)/2.0
@@ -179,12 +180,13 @@ for z in elements:
             Prng.RandomNumberGenerator.setFakeStream(random_numbers)
             for i in range(0, length):
               samples[n, i], angle = dist.sample(energy)
-
-          for i in range(0, length-1):
-            pdfs[n, i] = dist.evaluatePDF(energy, e_losses[i])
-            cdfs[n, i] = dist.evaluateCDF(energy, e_losses[i])
-          pdfs[n, length-1] = dist.evaluatePDF(energy, max_energy_interp)
-          cdfs[n, length-1] = dist.evaluateCDF(energy, max_energy_interp)
+          # print "\n\n"
+          # for i in range(0, length-1):
+          #   print e_losses[i]
+            # pdfs[n, i] = dist.evaluatePDF(energy, e_losses[i])
+          #   cdfs[n, i] = dist.evaluateCDF(energy, e_losses[i])
+          # pdfs[n, length-1] = dist.evaluatePDF(energy, max_energy_interp)
+          # cdfs[n, length-1] = dist.evaluateCDF(energy, max_energy_interp)
 
         if interpolation == "LinLinLin":
           percent_values = (e_losses - e_losses[0])/(max_energy - e_losses[0])
@@ -337,27 +339,29 @@ for z in elements:
 
           dist = Collision.createLogLogLogCorrelatedElectroionizationSubshellDistribution(native_data, shell, binding_energy, tol)
           # Get lower energy bin data
-          samples_0 = numpy.zeros(shape=len(random_numbers))
-          samples_00 = numpy.zeros(shape=len(random_numbers))
-          Prng.RandomNumberGenerator.setFakeStream(random_numbers)
-          for i in range(0, len(random_numbers)):
-            samples_0[i], angle = dist.sample(energy_0)
-          print samples_0
-          print e_losses_0[0], e_losses_0[len(e_losses_0)-1]
-          Prng.RandomNumberGenerator.setFakeStream(random_numbers)
-          for i in range(0, len(random_numbers)):
-            samples_00[i] = dist_0.sample()
+          print binding_energy
+          print energy_0
+          # samples_0 = numpy.zeros(shape=len(random_numbers))
+          # samples_00 = numpy.zeros(shape=len(random_numbers))
+          # Prng.RandomNumberGenerator.setFakeStream(random_numbers)
+          # for i in range(0, len(random_numbers)):
+          #   samples_0[i], angle = dist.sample(energy_0)
+          # print samples_0
+          # print e_losses_0[0], e_losses_0[len(e_losses_0)-1]
+          # Prng.RandomNumberGenerator.setFakeStream(random_numbers)
+          # for i in range(0, len(random_numbers)):
+          #   samples_00[i] = dist_0.sample()
 
 
-          # Get lower energy bin data
-          samples_1 = numpy.zeros(shape=len(random_numbers))
-          samples_11 = numpy.zeros(shape=len(random_numbers))
-          Prng.RandomNumberGenerator.setFakeStream(random_numbers)
-          for i in range(0, len(random_numbers)):
-            samples_1[i], angle = dist.sample(energy_1)
-          Prng.RandomNumberGenerator.setFakeStream(random_numbers)
-          for i in range(0, len(random_numbers)):
-            samples_11[i] = dist_1.sample()
+          # # Get upper energy bin data
+          # samples_1 = numpy.zeros(shape=len(random_numbers))
+          # samples_11 = numpy.zeros(shape=len(random_numbers))
+          # Prng.RandomNumberGenerator.setFakeStream(random_numbers)
+          # for i in range(0, len(random_numbers)):
+          #   samples_1[i], angle = dist.sample(energy_1)
+          # Prng.RandomNumberGenerator.setFakeStream(random_numbers)
+          # for i in range(0, len(random_numbers)):
+          #   samples_11[i] = dist_1.sample()
 
           percent_samples = numpy.zeros(shape=(len(schemes), length))
 
@@ -366,19 +370,19 @@ for z in elements:
 
             for n in range(0, len(schemes)):
               percent_samples[n] = (samples[n] - min_energy)/(max_energy - min_energy)
-            percent_samples_0 = (samples_0 - e_losses_0[0])/(e_losses_0[len(e_losses_0)-1] - e_losses_0[0])
-            percent_samples_00 = (samples_00 - e_losses_0[0])/(e_losses_0[len(e_losses_0)-1] - e_losses_0[0])
-            percent_samples_1 = (samples_1 - e_losses_1[0])/(e_losses_1[len(e_losses_1)-1] - e_losses_1[0])
-            percent_samples_11 = (samples_11 - e_losses_1[0])/(e_losses_1[len(e_losses_1)-1] - e_losses_1[0])
+            # percent_samples_0 = (samples_0 - e_losses_0[0])/(e_losses_0[len(e_losses_0)-1] - e_losses_0[0])
+            # percent_samples_00 = (samples_00 - e_losses_0[0])/(e_losses_0[len(e_losses_0)-1] - e_losses_0[0])
+            # percent_samples_1 = (samples_1 - e_losses_1[0])/(e_losses_1[len(e_losses_1)-1] - e_losses_1[0])
+            # percent_samples_11 = (samples_11 - e_losses_1[0])/(e_losses_1[len(e_losses_1)-1] - e_losses_1[0])
           elif interpolation == "LogLogLog":
             min_energy = e_losses_0[0]*pow(e_losses_1[0]/e_losses_0[0], log_E_alpha)
 
             for n in range(0, len(schemes)):
               percent_samples[n] = numpy.log(samples[n]/min_energy)/numpy.log(max_energy/min_energy)
-            percent_samples_0 = numpy.log(samples_0/e_losses_0[0])/numpy.log(e_losses_0[len(e_losses_0)-1]/e_losses_0[0])
-            percent_samples_00 = numpy.log(samples_00/e_losses_0[0])/numpy.log(e_losses_0[len(e_losses_0)-1]/e_losses_0[0])
-            percent_samples_1 = numpy.log(samples_1/e_losses_1[0])/numpy.log(e_losses_1[len(e_losses_1)-1]/e_losses_1[0])
-            percent_samples_11 = numpy.log(samples_11/e_losses_1[0])/numpy.log(e_losses_1[len(e_losses_1)-1]/e_losses_1[0])
+            # percent_samples_0 = numpy.log(samples_0/e_losses_0[0])/numpy.log(e_losses_0[len(e_losses_0)-1]/e_losses_0[0])
+            # percent_samples_00 = numpy.log(samples_00/e_losses_0[0])/numpy.log(e_losses_0[len(e_losses_0)-1]/e_losses_0[0])
+            # percent_samples_1 = numpy.log(samples_1/e_losses_1[0])/numpy.log(e_losses_1[len(e_losses_1)-1]/e_losses_1[0])
+            # percent_samples_11 = numpy.log(samples_11/e_losses_1[0])/numpy.log(e_losses_1[len(e_losses_1)-1]/e_losses_1[0])
 
 
           title = 'Sampled Electro-ionization Energy Loss at ' + str(energy) + ' MeV for shell ' + str(shell)
@@ -391,17 +395,18 @@ for z in elements:
           plt.ylabel('CDF')
           plt.title(title)
 
-          plt.plot(percent_samples_0, random_numbers, label=label0)
-          plt.plot(percent_samples_00, random_numbers, label=label00, linestyle="--", marker="s", markevery=length/10)
-          plt.plot(percent_samples_1, random_numbers, label=label1)
-          plt.plot(percent_samples_11, random_numbers, label=label11, linestyle="--", marker="s", markevery=length/10)
+          # plt.plot(percent_samples_0, random_numbers, label=label0)
+          # plt.plot(percent_samples_00, random_numbers, label=label00, linestyle="--", marker="s", markevery=length/10)
+          # plt.plot(percent_samples_1, random_numbers, label=label1)
+          # plt.plot(percent_samples_11, random_numbers, label=label11, linestyle="--", marker="s", markevery=length/10)
 
           for n in range(0, len(schemes)):
-            plt.plot(percent_samples[n], random_numbers, dashes=dashes[n], label=labels[n])
+            plt.plot(samples[n], random_numbers, dashes=dashes[n], label=labels[n])
 
           plt.xscale('log')
           plt.yscale('log')
           plt.legend(loc=4)
+          plt.ylim( 0.1, 1.0)
 
           # Plot differences
           if len(schemes) > 1 and show_difference:
