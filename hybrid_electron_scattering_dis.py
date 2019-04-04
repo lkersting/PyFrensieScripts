@@ -2,27 +2,23 @@
 import PyFrensie.Data.Native as Native
 import PyFrensie.Utility as Utility
 import PyFrensie.Utility.Prng as Prng
-import PyFrensie.Utility.Interpolation as Interpolation
 import PyFrensie.MonteCarlo.Collision as Collision
-import PyTrilinos.Teuchos as Teuchos
+import PyFrensie.MonteCarlo.Electron as Electron
 import numpy
 import matplotlib.pyplot as plt
 
 Utility.initFrensiePrng()
 
-#datadir = '/home/software/mcnpdata/'
-datadir = '/home/lkersting/frensie/src/packages/test_files/'
-
-source = Teuchos.FileInputSource( datadir + '/cross_sections.xml' )
-xml_obj = source.getObject()
-cs_list = Teuchos.XMLParameterListReader().toParameterList( xml_obj )
+folderpath = '/home/software/mcnpdata/native/epr/'
+filename = folderpath + 'epr_native_82.xml'
+folderpath = '/home/lkersting/frensie/src/packages/test_files/native/'
+filename = folderpath + 'test_epr_82_native.xml'
 
 ### -------------------------------------------------------------------------- ##
 ###  Forward Elastic Unit Test Check
 ### -------------------------------------------------------------------------- ##
-data_list = cs_list.get( 'Pb-Native' )
-native_file_name = datadir + data_list.get( 'electroatomic_file_path' )
-native_data = Native.ElectronPhotonRelaxationDataContainer( native_file_name )
+
+native_data = Native.ElectronPhotonRelaxationDataContainer( filename )
 energy_grid = native_data.getElectronEnergyGrid()
 
 tot_elastic_cs = native_data.getTotalElasticCrossSection()
@@ -44,18 +40,17 @@ for interp in interps:
     print "\n----------------------------"
     print "--- ",interp," Pb Tests ---"
     print "----------------------------"
-
-    hybrid_dist = Collision.createLinLinLogCorrelatedHybridElasticDistribution(native_data, 0.9, 1e-14)
-    cutoff_dist = Collision.createLinLinLogCorrelatedCutoffElasticDistribution(native_data, 0.9, 1e-14)
-    full_cutoff_dist = Collision.createLinLinLogCorrelatedCutoffElasticDistribution(native_data, 1.0, 1e-14)
+    hybrid_dist = Electron.createHybridElasticDistribution_LinLogCorrelated(native_data, 0.9, 1e-14 )
+    cutoff_dist = Electron.createCutoffElasticDistribution_LinLogCorrelated(native_data, 0.9, 1e-14)
+    full_cutoff_dist = Electron.createCutoffElasticDistribution_LinLogCorrelated(native_data, 1.0, 1e-14)
     if interp == "LinLinLin":
-      hybrid_dist = Collision.createLinLinLinCorrelatedHybridElasticDistribution(native_data, 0.9, 1e-14)
-      cutoff_dist = Collision.createLinLinLinCorrelatedCutoffElasticDistribution(native_data, 0.9, 1e-14)
-      full_cutoff_dist = Collision.createLinLinLinCorrelatedCutoffElasticDistribution(native_data, 1.0, 1e-14)
+      hybrid_dist = Electron.createHybridElasticDistribution_LinLinCorrelated(native_data, 0.9, 1e-14)
+      cutoff_dist = Electron.createCutoffElasticDistribution_LinLinCorrelated(native_data, 0.9, 1e-14)
+      full_cutoff_dist = Electron.createCutoffElasticDistribution_LinLinCorrelated(native_data, 1.0, 1e-14)
     elif interp == "LogLogLog":
-      hybrid_dist = Collision.createLogLogLogCorrelatedHybridElasticDistribution(native_data, 0.9, 1e-14)
-      cutoff_dist = Collision.createLogLogLogCorrelatedCutoffElasticDistribution(native_data, 0.9, 1e-14)
-      full_cutoff_dist = Collision.createLogLogLogCorrelatedCutoffElasticDistribution(native_data, 1.0, 1e-14)
+      hybrid_dist = Electron.createHybridElasticDistribution_LogLogCorrelated(native_data, 0.9, 1e-14)
+      cutoff_dist = Electron.createCutoffElasticDistribution_LogLogCorrelated(native_data, 0.9, 1e-14)
+      full_cutoff_dist = Electron.createCutoffElasticDistribution_LogLogCorrelated(native_data, 1.0, 1e-14)
 
     ###
     ###  Get Sampling Ratios
@@ -99,7 +94,7 @@ for interp in interps:
         # print '\tsampling ratio =','%.16e' % ratio
         print '\tunorm eval =','%.16e' % unorm_eval
         # print '\teval   =','%.16e' % evaluation
-        print '\tresult =','%.16e' % hybrid_dist.evaluate( energy, 0.9 )
+        # print '\tresult =','%.16e' % hybrid_dist.evaluate( energy, 0.9 )
 
 
     ###
@@ -117,7 +112,7 @@ for interp in interps:
         # print '\tsampling ratio =','%.16e' % ratio
         print '\tunorm pdf =','%.16e' % unorm_pdf
         # print '\tpdf   =','%.16e' % pdf
-        print '\tresult =','%.16e' % hybrid_dist.evaluatePDF( energy, 0.9 )
+        # print '\tresult =','%.16e' % hybrid_dist.evaluatePDF( energy, 0.9 )
 
     ###
     ###  Evaluate CDF
@@ -148,7 +143,7 @@ for interp in interps:
     cutoff_cdf = cutoff_dist.evaluateCutoffCrossSectionRatio( energy )
     full_cutoff_cdf = full_cutoff_dist.evaluateCDF( energy, 0.9 )
 
-    for i in range(0, cutoff_cs.size ):
+    for i in range(0, len(cutoff_cs) ):
         if energy_grid[i] == energy:
             print '\nenergy = ', energy_grid[i]
             print '\tcutoff_cdf      = ','%.16e' % cutoff_cdf
@@ -188,14 +183,14 @@ for interp in interps:
 
 
     energy = 1e-4
-    mp_dist = Collision.createLinLinLogCorrelatedMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
+    mp_dist = Electron.createMomentPreservingElasticDistribution_LinLogCorrelated(native_data, 0.9, 1e-15)
     if interp == "LinLinLin":
-      mp_dist = Collision.createLinLinLinCorrelatedMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
+      mp_dist = Electron.createMomentPreservingElasticDistribution_LinLinCorrelated(native_data, 0.9, 1e-15)
     elif interp == "LogLogLog":
-      mp_dist = Collision.createLogLogLogCorrelatedMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
+      mp_dist = Electron.createMomentPreservingElasticDistribution_LogLogCorrelated(native_data, 0.9, 1e-15)
     cutoff_cdf = cutoff_dist.evaluateCutoffCrossSectionRatio( energy )
 
-    for i in range(0, cutoff_cs.size ):
+    for i in range(0, len(cutoff_cs) ):
         if energy_grid[i] == energy:
             print '\nenergy = ', energy_grid[i]
             print '\tcutoff_cdf = ','%.16e' % cutoff_cdf
@@ -225,7 +220,7 @@ for interp in interps:
     print "\n\t--- discrete sampling ---"
 
     index = 0
-    for i in range(0, discrete_energy_grid.size ):
+    for i in range(0, len(discrete_energy_grid) ):
         if discrete_energy_grid[i] <= energy:
             index = i
     energy_0 = discrete_energy_grid[index]
@@ -297,136 +292,139 @@ for interp in interps:
 
 
 
-## -------------------------------------------------------------------------- ##
-##  Adjoint Elastic Unit Test Check
-## -------------------------------------------------------------------------- ##
-print "\n--- Adjoint Elastic Unit Test Check ---"
-data_list = cs_list.get( 'H-Native' )
-native_file_name = datadir + data_list.get( 'adjoint_electroatomic_file_path' )
-native_data = Native.AdjointElectronPhotonRelaxationDataContainer( native_file_name )
-energy_grid = native_data.getAdjointElectronEnergyGrid()
+# ## -------------------------------------------------------------------------- ##
+# ##  Adjoint Elastic Unit Test Check
+# ## -------------------------------------------------------------------------- ##
+# print "\n--- Adjoint Elastic Unit Test Check ---"
 
-tot_elastic_cs = native_data.getAdjointTotalElasticCrossSection()
-cutoff_cs = native_data.getAdjointCutoffElasticCrossSection()
-screen_rutherford_cs = native_data.getAdjointScreenedRutherfordElasticCrossSection()
-screen_rutherford_index = native_data.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex()
-moment_cs = native_data.getAdjointMomentPreservingCrossSection()
+# filename = folderpath + '../aepr/aepr_native_1.xml'
+# folderpath = '/home/lkersting/frensie/src/packages/test_files/native/'
+# filename = folderpath + 'test_aepr_1_native.xml'
 
+# native_data = Native.AdjointElectronPhotonRelaxationDataContainer( filename )
+# energy_grid = native_data.getAdjointElectronEnergyGrid()
 
-discrete_energy_grid = native_data.getAdjointElasticAngularEnergyGrid()
-
-###
-###  Cutoff Distribution
-###
-energy = 1e-3
-
-partial_cutoff_dist = Collision.createCutoffElasticDistribution(native_data, 0.9, True, True, 1e-15)
-full_cutoff_dist = Collision.createCutoffElasticDistribution(native_data, 1.0, True, True, 1e-15)
-hybrid_dist = Collision.createHybridElasticDistribution(native_data, 0.9, True, True, 1e-15)
-if interp == "LinLinLin":
-  mp_dist = Collision.createLinLinLinCorrelatedMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
-elif interp == "LogLogLog":
-  mp_dist = Collision.createLogLogLogCorrelatedMomentPreservingElasticDistribution(native_data, 0.9, 1e-15)
-
-partial_cutoff_dist = Collision.createCutoffElasticDistribution(native_data, 0.9, True, True, 1e-15)
-full_cutoff_dist = Collision.createCutoffElasticDistribution(native_data, 1.0, True, True, 1e-15)
-hybrid_dist = Collision.createHybridElasticDistribution(native_data, 0.9, True, True, 1e-15)
-cutoff_cdf = full_cutoff_dist.evaluateCDF( energy, 0.9 )
-
-for i in range(0, cutoff_cs.size ):
-    if energy_grid[i] <= energy:
-        index = i
-
-energy_0 = energy_grid[index]
-cutoff_cdf_0 = partial_cutoff_dist.evaluateCutoffCrossSectionRatio( energy_0 )
-print '\nenergy_0 = ', energy_0
-print '\tcutoff_cdf_0 = ','%.16e' % cutoff_cdf_0
-cutoff_cs_0 = cutoff_cs[index]
-print '\tcutoff_cs_0 = ','%.16e' % cutoff_cs_0
-moment_cs_0 = moment_cs[index]
-print '\tmoment_preserving_cs_0 = ','%.16e' % moment_cs_0
-cross_section_ratio_0 = cutoff_cs[index]*cutoff_cdf_0/moment_cs[index]
-print '\tcross section ratio_0 = ','%.16e' % cross_section_ratio_0
-#cross_section_ratio_0 = hybrid_dist.getCrossSectionRatio( energy_0 )
-#print '\tcross section ratio_0 = ','%.16e' % cross_section_ratio_0
-#sampling_ratio_0 = cross_section_ratio_0/(1.0+cross_section_ratio_0)
-#print '\tsampling_ratio_0 = ','%.16e' % sampling_ratio_0
-
-energy_1 = energy_grid[index+1]
-cutoff_cdf_1 = partial_cutoff_dist.evaluateCutoffCrossSectionRatio( energy_1 )
-print '\nenergy_1 = ', energy_1
-print '\tcutoff_cdf_1 = ','%.16e' % cutoff_cdf_1
-cutoff_cs_1 = cutoff_cs[index+1]
-print '\tcutoff_cs_1 = ','%.16e' % cutoff_cs_0
-moment_cs_1 = moment_cs[index+1]
-print '\tmoment_preserving_cs_1 = ','%.16e' % moment_cs_1
-cross_section_ratio_1 = cutoff_cs[index+1]*cutoff_cdf_1/moment_cs[index+1]
-print '\tcross section ratio_1 = ','%.16e' % cross_section_ratio_1
-#cross_section_ratio_1 = hybrid_dist.getCrossSectionRatio( energy_1 )
-#print '\tcross section ratio_1 = ','%.16e' % cross_section_ratio_1
-#sampling_ratio_1 = cross_section_ratio_1/(1.0+cross_section_ratio_1)
-#print '\tsampling_ratio_1 = ','%.16e' % sampling_ratio_1
-
-lin_interp = (energy - energy_0)/(energy_1 - energy_0)
-log_interp = numpy.log(energy/energy_0)/numpy.log(energy_1/energy_0)
-cutoff_cdf = partial_cutoff_dist.evaluateCutoffCrossSectionRatio( energy )
-print '\nenergy = ', energy
-print '\tcutoff_cdf = ','%.16e' % cutoff_cdf
-cutoff_cs_e = cutoff_cs_0 + (cutoff_cs_1 - cutoff_cs_0)*log_interp
-print '\tcutoff_cs = ','%.16e' % cutoff_cs_e
-moment_cs_e = moment_cs_0 + (moment_cs_1 - moment_cs_0)*log_interp
-print '\tmoment_preserving_cs = ','%.16e' % moment_cs_e
-cross_section_ratio = cutoff_cs_e*cutoff_cdf/moment_cs_e
-print '\tcross section ratio = ','%.16e' % cross_section_ratio
-#cross_section_ratio = cross_section_ratio_0 + (cross_section_ratio_1 - cross_section_ratio_0)*lin_interp
-#print '\tcross section ratio = ','%.16e' % cross_section_ratio
-#cross_section_ratio = hybrid_dist.getCrossSectionRatio( energy )
-#print '\tcross section ratio = ','%.16e' % cross_section_ratio
-#sampling_ratio = cross_section_ratio/(1.0+cross_section_ratio)
-#print '\tsampling_ratio = ','%.16e' % sampling_ratio
+# tot_elastic_cs = native_data.getAdjointTotalElasticCrossSection()
+# cutoff_cs = native_data.getAdjointCutoffElasticCrossSection()
+# screen_rutherford_cs = native_data.getAdjointScreenedRutherfordElasticCrossSection()
+# screen_rutherford_index = native_data.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex()
+# # moment_cs = native_data.getAdjointMomentPreservingCrossSection()
 
 
-print "\n\t--- continuous sampling ---"
-cdf_0 = partial_cutoff_dist.evaluateCDF( energy_0, 0.1 )
-cdf = partial_cutoff_dist.evaluateCDF( energy, 0.1 )
-cdf_1 = partial_cutoff_dist.evaluateCDF( energy_1, 0.1 )
-print '\tcdf at 0.1 for partial cutoff = ','%.16e' % cdf
-cdf_scaled = cdf*sampling_ratio
-print '\tcdf at 0.1 for hybrid = ','%.16e' % cdf_scaled
-print '\tcdf at 0.9 for cutoff = ','%.16e' % cutoff_cdf
-print '\tcdf at 0.9 for hybrid = ','%.16e' % sampling_ratio
+# discrete_energy_grid = native_data.getAdjointElasticAngularEnergyGrid()
 
-random_numbers = [cdf,cdf_scaled]
-Prng.RandomNumberGenerator.setFakeStream(random_numbers)
-print "\tsample[",energy,",",random_numbers[0],"] = ", partial_cutoff_dist.sample( energy )
-print "\tsample[",energy,",",random_numbers[1],"] = ",hybrid_dist.sample( energy )
+# ###
+# ###  Cutoff Distribution
+# ###
+# energy = 1e-3
 
-print "\n\t--- discrete sampling ---"
+# partial_cutoff_dist = Electron.createCutoffElasticDistribution_LinLogCorrelated(native_data, 0.9, 1e-15)
+# full_cutoff_dist = Electron.createCutoffElasticDistribution_LinLogCorrelated(native_data, 1.0, 1e-15)
+# hybrid_dist = Electron.createHybridElasticDistribution_LinLogCorrelated(native_data, 0.9, 1e-15)
+# if interp == "LinLinLin":
+#   mp_dist = Electron.createMomentPreservingElasticDistribution_LinLinCorrelated(native_data, 0.9, 1e-15)
+# elif interp == "LogLogLog":
+#   mp_dist = Electron.createMomentPreservingElasticDistribution_LogLogCorrelated(native_data, 0.9, 1e-15)
 
-index = 0
-for i in range(0, discrete_energy_grid.size ):
-    if discrete_energy_grid[i] == energy:
-        index = i
+# partial_cutoff_dist = Electron.createCutoffElasticDistribution(native_data, 0.9, 1e-15)
+# full_cutoff_dist = Electron.createCutoffElasticDistribution(native_data, 1.0, 1e-15)
+# hybrid_dist = Electron.createHybridElasticDistribution(native_data, 0.9, 1e-15)
+# cutoff_cdf = full_cutoff_dist.evaluateCDF( energy, 0.9 )
+
+# for i in range(0, cutoff_cs.size ):
+#     if energy_grid[i] <= energy:
+#         index = i
+
+# energy_0 = energy_grid[index]
+# cutoff_cdf_0 = partial_cutoff_dist.evaluateCutoffCrossSectionRatio( energy_0 )
+# print '\nenergy_0 = ', energy_0
+# print '\tcutoff_cdf_0 = ','%.16e' % cutoff_cdf_0
+# cutoff_cs_0 = cutoff_cs[index]
+# print '\tcutoff_cs_0 = ','%.16e' % cutoff_cs_0
+# moment_cs_0 = moment_cs[index]
+# print '\tmoment_preserving_cs_0 = ','%.16e' % moment_cs_0
+# cross_section_ratio_0 = cutoff_cs[index]*cutoff_cdf_0/moment_cs[index]
+# print '\tcross section ratio_0 = ','%.16e' % cross_section_ratio_0
+# #cross_section_ratio_0 = hybrid_dist.getCrossSectionRatio( energy_0 )
+# #print '\tcross section ratio_0 = ','%.16e' % cross_section_ratio_0
+# #sampling_ratio_0 = cross_section_ratio_0/(1.0+cross_section_ratio_0)
+# #print '\tsampling_ratio_0 = ','%.16e' % sampling_ratio_0
+
+# energy_1 = energy_grid[index+1]
+# cutoff_cdf_1 = partial_cutoff_dist.evaluateCutoffCrossSectionRatio( energy_1 )
+# print '\nenergy_1 = ', energy_1
+# print '\tcutoff_cdf_1 = ','%.16e' % cutoff_cdf_1
+# cutoff_cs_1 = cutoff_cs[index+1]
+# print '\tcutoff_cs_1 = ','%.16e' % cutoff_cs_0
+# moment_cs_1 = moment_cs[index+1]
+# print '\tmoment_preserving_cs_1 = ','%.16e' % moment_cs_1
+# cross_section_ratio_1 = cutoff_cs[index+1]*cutoff_cdf_1/moment_cs[index+1]
+# print '\tcross section ratio_1 = ','%.16e' % cross_section_ratio_1
+# #cross_section_ratio_1 = hybrid_dist.getCrossSectionRatio( energy_1 )
+# #print '\tcross section ratio_1 = ','%.16e' % cross_section_ratio_1
+# #sampling_ratio_1 = cross_section_ratio_1/(1.0+cross_section_ratio_1)
+# #print '\tsampling_ratio_1 = ','%.16e' % sampling_ratio_1
+
+# lin_interp = (energy - energy_0)/(energy_1 - energy_0)
+# log_interp = numpy.log(energy/energy_0)/numpy.log(energy_1/energy_0)
+# cutoff_cdf = partial_cutoff_dist.evaluateCutoffCrossSectionRatio( energy )
+# print '\nenergy = ', energy
+# print '\tcutoff_cdf = ','%.16e' % cutoff_cdf
+# cutoff_cs_e = cutoff_cs_0 + (cutoff_cs_1 - cutoff_cs_0)*log_interp
+# print '\tcutoff_cs = ','%.16e' % cutoff_cs_e
+# moment_cs_e = moment_cs_0 + (moment_cs_1 - moment_cs_0)*log_interp
+# print '\tmoment_preserving_cs = ','%.16e' % moment_cs_e
+# cross_section_ratio = cutoff_cs_e*cutoff_cdf/moment_cs_e
+# print '\tcross section ratio = ','%.16e' % cross_section_ratio
+# #cross_section_ratio = cross_section_ratio_0 + (cross_section_ratio_1 - cross_section_ratio_0)*lin_interp
+# #print '\tcross section ratio = ','%.16e' % cross_section_ratio
+# #cross_section_ratio = hybrid_dist.getCrossSectionRatio( energy )
+# #print '\tcross section ratio = ','%.16e' % cross_section_ratio
+# #sampling_ratio = cross_section_ratio/(1.0+cross_section_ratio)
+# #print '\tsampling_ratio = ','%.16e' % sampling_ratio
 
 
-discrete_angles = native_data.getAdjointMomentPreservingElasticDiscreteAngles(energy)
-discrete_weights = native_data.getAdjointMomentPreservingElasticWeights(energy)
-print "\n\t--- discrete angles ",discrete_energy_grid[index]," ---"
-print "\t1: ",'%.18e' % discrete_angles[0]
-print "\t2: ",'%.18e' % discrete_angles[1]
-#print "\t--- dicrete weights ",discrete_energy_grid[index]," ---"
-#print "\t1: ",'%.18e' % discrete_weights[0]
-#print "\t2: ",'%.18e' % discrete_weights[1]
+# print "\n\t--- continuous sampling ---"
+# cdf_0 = partial_cutoff_dist.evaluateCDF( energy_0, 0.1 )
+# cdf = partial_cutoff_dist.evaluateCDF( energy, 0.1 )
+# cdf_1 = partial_cutoff_dist.evaluateCDF( energy_1, 0.1 )
+# print '\tcdf at 0.1 for partial cutoff = ','%.16e' % cdf
+# cdf_scaled = cdf*sampling_ratio
+# print '\tcdf at 0.1 for hybrid = ','%.16e' % cdf_scaled
+# print '\tcdf at 0.9 for cutoff = ','%.16e' % cutoff_cdf
+# print '\tcdf at 0.9 for hybrid = ','%.16e' % sampling_ratio
+
+# random_numbers = [cdf,cdf_scaled]
+# Prng.RandomNumberGenerator.setFakeStream(random_numbers)
+# print "\tsample[",energy,",",random_numbers[0],"] = ", partial_cutoff_dist.sample( energy )
+# print "\tsample[",energy,",",random_numbers[1],"] = ",hybrid_dist.sample( energy )
+
+# print "\n\t--- discrete sampling ---"
+
+# index = 0
+# for i in range(0, discrete_energy_grid.size ):
+#     if discrete_energy_grid[i] == energy:
+#         index = i
 
 
-#weight_1_ratio = (discrete_weights[0] + cross_section_ratio)/(1.0+cross_section_ratio)
-#print '\n\tweight_1 cdf range = ','%.16e' % sampling_ratio,' < random number <= ','%.16e' % weight_1_ratio
-#weight_2_ratio = (discrete_weights[0]+discrete_weights[1] + cross_section_ratio)/(1.0+cross_section_ratio)
-#print '\tweight_2 cdf range = ','%.16e' % weight_1_ratio,' < random number <= ','%.16e' % weight_2_ratio
+# discrete_angles = native_data.getAdjointMomentPreservingElasticDiscreteAngles(energy)
+# discrete_weights = native_data.getAdjointMomentPreservingElasticWeights(energy)
+# print "\n\t--- discrete angles ",discrete_energy_grid[index]," ---"
+# print "\t1: ",'%.18e' % discrete_angles[0]
+# print "\t2: ",'%.18e' % discrete_angles[1]
+# #print "\t--- dicrete weights ",discrete_energy_grid[index]," ---"
+# #print "\t1: ",'%.18e' % discrete_weights[0]
+# #print "\t2: ",'%.18e' % discrete_weights[1]
 
-#mp_dist = Collision.createMomentPreservingElasticDistribution(native_data, 0.9, False, True, 1e-15)
-#random_numbers = [ discrete_weights[0]-1e-7, discrete_weights[0]+1e-7 ]
-#Prng.RandomNumberGenerator.setFakeStream(random_numbers)
-#print "\tsample[",energy,",",random_numbers[0],"] = ", mp_dist.sample( energy )
-#print "\tsample[",energy,",",random_numbers[1],"] = ", mp_dist.sample( energy )
+
+# #weight_1_ratio = (discrete_weights[0] + cross_section_ratio)/(1.0+cross_section_ratio)
+# #print '\n\tweight_1 cdf range = ','%.16e' % sampling_ratio,' < random number <= ','%.16e' % weight_1_ratio
+# #weight_2_ratio = (discrete_weights[0]+discrete_weights[1] + cross_section_ratio)/(1.0+cross_section_ratio)
+# #print '\tweight_2 cdf range = ','%.16e' % weight_1_ratio,' < random number <= ','%.16e' % weight_2_ratio
+
+# #mp_dist = Electron.createMomentPreservingElasticDistribution(native_data, 0.9, False, True, 1e-15)
+# #random_numbers = [ discrete_weights[0]-1e-7, discrete_weights[0]+1e-7 ]
+# #Prng.RandomNumberGenerator.setFakeStream(random_numbers)
+# #print "\tsample[",energy,",",random_numbers[0],"] = ", mp_dist.sample( energy )
+# #print "\tsample[",energy,",",random_numbers[1],"] = ", mp_dist.sample( energy )
 
